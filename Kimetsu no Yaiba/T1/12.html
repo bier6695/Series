@@ -227,10 +227,15 @@ function downloadJSAtOnload(){var e=document.createElement("script");e.src="http
     <img alt="Telon de Fondo" class="main_fondo lazy" src="https://raw.githubusercontent.com/Uncannywabisabi/archivos/main/Im%C3%A1genes/cargando.gif" data-src="https://www.dl.dropboxusercontent.com/s/vvtlwbgstgzz03c/cineseriestv.png"> 
   </div>
   
+  <script type="text/javascript">
+    window.onbeforeunload = function () {                       
+         return "This will end your session";
+    }
+</script>
 <!-- Codigo para Imagen del video fin -->  
   
   <div class="embed-responsive-item" id="caja-option">
-      <iframe class="embed-responsive-item" src=""sandbox="allow-same-origin allow-scripts" scrolling="no" allowfullscreen id="iframepro"></iframe>
+      <iframe class="embed-responsive-item" src="" scrolling="no" allowfullscreen id="iframepro"></iframe>
 </div>
 </div>
 <div class="row option">
