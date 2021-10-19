@@ -2,11 +2,31 @@
 <!DOCTYPE html>
 <html lang=es>
 <head>
-<script type="text/javascript">
-    window.onbeforeunload = function () {                       
-         return "This will end your session";
+<script  language="JavaScript">
+var salir=true;
+//Esta funcion nos sirve para detectar si esta saliendo por donde queremos en este caso la liga
+//Con lo cual cambia la bandera
+function cambiarvalor()
+{
+    salir=false;
+}
+//Esta funcion checa la bandera salir atravez del evento onbeforeunload el cual se dispara antes de empezar
+//a cargar la nueva pagina preguntandonos si deseamos salir o no.
+//Como el valor de salir es verdadero desde el principio significa que si queremos actualizar o salir de la pagina
+//se lanzara el mensaje de confirmacion de la accion.
+//Si estamos oprimiendo en la liga la funcion cambiarvalor cambia la bandera indicando que estamos aliendo correctamente
+//Espero explicarme bien y que esto los ayude en sus proyectos
+//Hecho por Héctor Buendía Rivas
+//(aunque paresca medio payaso poner mi nombre pero si me costo un monton llegar a este codigo,
+//que no esta en la red y salio despues de mucha investigacion)
+function antesdecerrar()
+{
+    if (salir==true)
+    {
+        return 'Esta accion perdera los cambios hechos a la pagina si no guardas!!!!!';
     }
-</script>  
+}
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -238,7 +258,7 @@ function downloadJSAtOnload(){var e=document.createElement("script");e.src="http
 <!-- Codigo para Imagen del video fin -->  
   
   <div class="embed-responsive-item" id="caja-option">
-      <iframe class="embed-responsive-item" src="" scrolling="no" allowfullscreen id="iframepro"></iframe>
+      <iframe  src="" onBeforeUnload="return antesdecerrar()" scrolling="no" allowfullscreen id="iframepro"></iframe>
 </div>
 </div>
 <div class="row option">
