@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heladería POS - Sistema Mejorado</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -491,6 +495,10 @@
             transform: translateX(0);
         }
 
+        .notification.error {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        }
+
         .low-stock-alert {
             background: linear-gradient(135deg, #fff3cd, #ffeaa7);
             border: 2px solid #ffc107;
@@ -626,6 +634,20 @@
             border-color: #667eea;
             background: rgba(102, 126, 234, 0.1);
         }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -634,27 +656,25 @@
         <div class="login-container">
             <h2 style="text-align: center; margin-bottom: 30px;">🍦 Sistema POS - Heladería</h2>
             
-            <div class="vendor-select">
-                <div class="vendor-card" data-vendor="Juan Pérez">
-                    <div style="font-size: 2rem;">👨‍💼</div>
-                    <strong>Juan Pérez</strong>
-                    <div>Administrador</div>
-                </div>
-                <div class="vendor-card" data-vendor="María García">
-                    <div style="font-size: 2rem;">👩‍💼</div>
-                    <strong>María García</strong>
-                    <div>Vendedora</div>
-                </div>
-                <div class="vendor-card" data-vendor="Carlos López">
-                    <div style="font-size: 2rem;">👨‍💼</div>
-                    <strong>Carlos López</strong>
-                    <div>Vendedor</div>
-                </div>
+            <div class="form-group">
+                <label>📧 Correo Electrónico</label>
+                <input type="email" class="form-control" id="loginEmail" placeholder="correo@ejemplo.com">
             </div>
             
-            <button class="btn btn-primary" onclick="loginVendor()" style="width: 100%;" disabled id="loginBtn">
+            <div class="form-group">
+                <label>🔑 Contraseña</label>
+                <input type="password" class="form-control" id="loginPassword" placeholder="Contraseña">
+            </div>
+            
+            <button class="btn btn-primary" onclick="loginUser()" style="width: 100%;" id="loginBtn">
                 Iniciar Sesión
             </button>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-warning" onclick="showRegisterModal()" style="padding: 8px 16px;">
+                    Registrar Nuevo Vendedor
+                </button>
+            </div>
         </div>
     </div>
 
@@ -666,10 +686,10 @@
             <div class="header">
                 <div class="logo">🍦 Heladería POS</div>
                 <div class="nav-buttons">
-                    <button class="nav-btn active">📊 Dashboard</button>
-                    <button class="nav-btn">🛒 Punto de Venta</button>
-                    <button class="nav-btn">📦 Inventario</button>
-                    <button class="nav-btn">💳 Créditos</button>
+                    <button class="nav-btn active" onclick="showSubSection('dashboard')">📊 Dashboard</button>
+                    <button class="nav-btn" onclick="showSubSection('pos')">🛒 Punto de Venta</button>
+                    <button class="nav-btn" onclick="showSubSection('inventory')">📦 Inventario</button>
+                    <button class="nav-btn" onclick="showSubSection('credits')">💳 Créditos</button>
                 </div>
                 <div class="user-info">
                     <span class="online-indicator"></span>
@@ -685,19 +705,19 @@
                     
                     <div class="dashboard-grid">
                         <div class="stat-card">
-                            <div class="stat-value" id="totalSales">$245.50</div>
+                            <div class="stat-value" id="totalSales">$0.00</div>
                             <div class="stat-label">💰 Ventas del Día</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="cashSales">$180.25</div>
+                            <div class="stat-value" id="cashSales">$0.00</div>
                             <div class="stat-label">💵 Ventas Efectivo</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="transferSales">$45.25</div>
+                            <div class="stat-value" id="transferSales">$0.00</div>
                             <div class="stat-label">💳 Transferencias</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="creditSales">$20.00</div>
+                            <div class="stat-value" id="creditSales">$0.00</div>
                             <div class="stat-label">📝 Ventas a Crédito</div>
                         </div>
                     </div>
@@ -717,22 +737,7 @@
                             </tr>
                         </thead>
                         <tbody id="recentSalesTable">
-                            <tr>
-                                <td>14:30</td>
-                                <td>María García</td>
-                                <td>Ana Martínez</td>
-                                <td>Vainilla (2), Chocolate (1)</td>
-                                <td>$9.00</td>
-                                <td>Efectivo</td>
-                            </tr>
-                            <tr>
-                                <td>14:15</td>
-                                <td>Juan Pérez</td>
-                                <td>Cliente General</td>
-                                <td>Fresa (1)</td>
-                                <td>$3.50</td>
-                                <td>Transferencia</td>
-                            </tr>
+                            <!-- Las ventas se cargarán dinámicamente -->
                         </tbody>
                     </table>
                 </div>
@@ -744,45 +749,10 @@
                         <div class="products-section">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                                 <h3>🍦 Productos Disponibles</h3>
-                                <input type="text" class="search-bar" placeholder="🔍 Buscar productos..." style="width: 250px; margin-bottom: 0;">
+                                <input type="text" class="search-bar" id="productSearch" placeholder="🔍 Buscar productos..." style="width: 250px; margin-bottom: 0;" oninput="searchProducts()">
                             </div>
-                            <div class="products-grid">
-                                <button class="product-card" onclick="addToCart({id: 'H001', name: 'Vainilla', price: 3.00, stock: 50})">
-                                    <div class="product-icon">🍦</div>
-                                    <div><strong>Vainilla</strong></div>
-                                    <div>$3.00</div>
-                                    <div>Stock: 50</div>
-                                </button>
-                                <button class="product-card" onclick="addToCart({id: 'H002', name: 'Chocolate', price: 3.00, stock: 45})">
-                                    <div class="product-icon">🍫</div>
-                                    <div><strong>Chocolate</strong></div>
-                                    <div>$3.00</div>
-                                    <div>Stock: 45</div>
-                                </button>
-                                <button class="product-card low-stock" onclick="addToCart({id: 'H003', name: 'Fresa', price: 3.50, stock: 8})">
-                                    <div class="product-icon">🍓</div>
-                                    <div><strong>Fresa</strong></div>
-                                    <div>$3.50</div>
-                                    <div>Stock: 8 ⚠️</div>
-                                </button>
-                                <button class="product-card" onclick="addToCart({id: 'H004', name: 'Cookies & Cream', price: 4.00, stock: 25})">
-                                    <div class="product-icon">🍪</div>
-                                    <div><strong>Cookies & Cream</strong></div>
-                                    <div>$4.00</div>
-                                    <div>Stock: 25</div>
-                                </button>
-                                <button class="product-card" onclick="addToCart({id: 'H005', name: 'Menta', price: 3.50, stock: 20})">
-                                    <div class="product-icon">🌿</div>
-                                    <div><strong>Menta</strong></div>
-                                    <div>$3.50</div>
-                                    <div>Stock: 20</div>
-                                </button>
-                                <button class="product-card" onclick="addToCart({id: 'H006', name: 'Mango', price: 3.75, stock: 35})">
-                                    <div class="product-icon">🥭</div>
-                                    <div><strong>Mango</strong></div>
-                                    <div>$3.75</div>
-                                    <div>Stock: 35</div>
-                                </button>
+                            <div class="products-grid" id="productsGrid">
+                                <!-- Los productos se cargarán dinámicamente -->
                             </div>
                         </div>
 
@@ -793,45 +763,37 @@
                             </div>
                             
                             <div id="cartItems">
-                                <div class="cart-item">
-                                    <div>
-                                        <strong>Vainilla</strong><br>
-                                        $3.00 c/u
-                                    </div>
-                                    <div class="quantity-controls">
-                                        <button class="quantity-btn">-</button>
-                                        <span class="quantity-display">2</span>
-                                        <button class="quantity-btn">+</button>
-                                    </div>
-                                </div>
+                                <!-- Los items del carrito se cargarán dinámicamente -->
                             </div>
                             
-                            <div class="cart-total">Total: $6.00</div>
+                            <div class="cart-total" id="cartTotal">Total: $0.00</div>
 
                             <div class="form-group">
                                 <label>👤 Cliente</label>
-                                <select class="form-control">
+                                <select class="form-control" id="customerSelect">
                                     <option value="">Cliente General</option>
-                                    <option value="Ana Martínez">Ana Martínez</option>
-                                    <option value="Luis Rodríguez">Luis Rodríguez</option>
-                                    <option value="Carmen Soto">Carmen Soto</option>
+                                    <!-- Los clientes se cargarán dinámicamente -->
                                 </select>
                             </div>
 
                             <div class="payment-methods">
-                                <div class="payment-method selected">
+                                <div class="payment-method selected" data-method="efectivo">
                                     💵<br><strong>Efectivo</strong>
                                 </div>
-                                <div class="payment-method">
+                                <div class="payment-method" data-method="transferencia">
                                     💳<br><strong>Transferencia</strong>
                                 </div>
-                                <div class="payment-method">
+                                <div class="payment-method" data-method="credito">
                                     📝<br><strong>Crédito</strong>
                                 </div>
                             </div>
 
-                            <button class="btn btn-success" style="width: 100%; margin-bottom: 10px;" onclick="processSale()">
+                            <button class="btn btn-success" style="width: 100%; margin-bottom: 10px;" onclick="processSale()" id="processSaleBtn">
                                 💰 Procesar Venta
+                            </button>
+                            
+                            <button class="btn btn-primary" style="width: 100%;" onclick="showAddCustomerModal()">
+                                ➕ Agregar Cliente
                             </button>
                         </div>
                     </div>
@@ -842,13 +804,13 @@
                     <h2 style="margin-bottom: 25px;">📦 Control de Inventario</h2>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                        <input type="text" class="search-bar" placeholder="🔍 Buscar productos..." style="width: 300px; margin-bottom: 0;">
+                        <input type="text" class="search-bar" id="inventorySearch" placeholder="🔍 Buscar productos..." style="width: 300px; margin-bottom: 0;" oninput="searchInventory()">
                         <button class="btn btn-primary" onclick="showAddProductModal()">➕ Agregar Producto</button>
                     </div>
                     
-                    <div class="low-stock-alert">
+                    <div class="low-stock-alert" id="lowStockAlert" style="display: none;">
                         <strong>⚠️ Productos con stock bajo:</strong><br>
-                        Fresa (8 unidades) - Se recomienda reabastecer
+                        <span id="lowStockProducts"></span>
                     </div>
 
                     <table class="table">
@@ -861,67 +823,8 @@
                                 <th>⚙️ Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>🍦 Vainilla</td>
-                                <td>$3.00</td>
-                                <td>50</td>
-                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
-                                <td>
-                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
-                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>🍫 Chocolate</td>
-                                <td>$3.00</td>
-                                <td>45</td>
-                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
-                                <td>
-                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
-                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
-                                </td>
-                            </tr>
-                            <tr style="background: rgba(255, 107, 107, 0.1);">
-                                <td>🍓 Fresa</td>
-                                <td>$3.50</td>
-                                <td>8</td>
-                                <td><span style="color: #e74c3c;">⚠️ Stock Bajo</span></td>
-                                <td>
-                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
-                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>🍪 Cookies & Cream</td>
-                                <td>$4.00</td>
-                                <td>25</td>
-                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
-                                <td>
-                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
-                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>🌿 Menta</td>
-                                <td>$3.50</td>
-                                <td>20</td>
-                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
-                                <td>
-                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
-                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>🥭 Mango</td>
-                                <td>$3.75</td>
-                                <td>35</td>
-                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
-                                <td>
-                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
-                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
-                                </td>
-                            </tr>
+                        <tbody id="inventoryTable">
+                            <!-- Los productos de inventario se cargarán dinámicamente -->
                         </tbody>
                     </table>
                 </div>
@@ -932,22 +835,22 @@
                     
                     <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 30px;">
                         <div class="stat-card">
-                            <div class="stat-value">$85.50</div>
+                            <div class="stat-value" id="totalCredits">$0.00</div>
                             <div class="stat-label">💰 Total en Créditos</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">3</div>
+                            <div class="stat-value" id="debtCustomers">0</div>
                             <div class="stat-label">👥 Clientes con Deuda</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">$28.50</div>
+                            <div class="stat-value" id="avgDebt">$0.00</div>
                             <div class="stat-label">📊 Promedio por Cliente</div>
                         </div>
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <input type="text" class="search-bar" placeholder="🔍 Buscar cliente..." style="width: 250px; margin-bottom: 0;">
-                        <button class="btn btn-success" onclick="addCreditPayment()">💰 Registrar Pago</button>
+                        <input type="text" class="search-bar" id="creditSearch" placeholder="🔍 Buscar cliente..." style="width: 250px; margin-bottom: 0;" oninput="searchCredits()">
+                        <button class="btn btn-success" onclick="showAddCreditPaymentModal()">💰 Registrar Pago</button>
                     </div>
 
                     <table class="table">
@@ -960,46 +863,8 @@
                                 <th>⚙️ Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <strong>Ana Martínez</strong><br>
-                                    <small>📞 809-111-2222</small>
-                                </td>
-                                <td><strong style="color: #e74c3c;">$35.00</strong></td>
-                                <td>2024-01-25</td>
-                                <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
-                                <td>
-                                    <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
-                                    <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory()">📋 Historial</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Luis Rodríguez</strong><br>
-                                    <small>📞 809-333-4444</small>
-                                </td>
-                                <td><strong style="color: #e74c3c;">$25.50</strong></td>
-                                <td>2024-01-23</td>
-                                <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
-                                <td>
-                                    <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
-                                    <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory()">📋 Historial</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Carmen Soto</strong><br>
-                                    <small>📞 809-555-6666</small>
-                                </td>
-                                <td><strong style="color: #e74c3c;">$25.00</strong></td>
-                                <td>2024-01-24</td>
-                                <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
-                                <td>
-                                    <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
-                                    <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory()">📋 Historial</button>
-                                </td>
-                            </tr>
+                        <tbody id="creditsTable">
+                            <!-- Los créditos se cargarán dinámicamente -->
                         </tbody>
                     </table>
 
@@ -1007,13 +872,13 @@
                         <h4 style="color: #155724; margin-bottom: 15px;">📊 Resumen de Créditos</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                             <div>
-                                <strong>💰 Total por cobrar:</strong> $85.50
+                                <strong>💰 Total por cobrar:</strong> <span id="totalToCollect">$0.00</span>
                             </div>
                             <div>
-                                <strong>📅 Crédito más antiguo:</strong> 2024-01-23
+                                <strong>📅 Crédito más antiguo:</strong> <span id="oldestCredit">N/A</span>
                             </div>
                             <div>
-                                <strong>👤 Cliente con mayor deuda:</strong> Ana Martínez
+                                <strong>👤 Cliente con mayor deuda:</strong> <span id="biggestDebtor">Ninguno</span>
                             </div>
                         </div>
                     </div>
@@ -1025,33 +890,128 @@
     <!-- Modal para Agregar Producto -->
     <div id="addProductModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close" onclick="closeModal('addProductModal')">&times;</span>
             <h3 style="margin-bottom: 25px;">➕ Agregar Nuevo Producto</h3>
             
             <div class="form-group">
                 <label>🍦 Nombre del Producto</label>
-                <input type="text" class="form-control" placeholder="Ej: Helado de Pistacho">
+                <input type="text" class="form-control" id="productName" placeholder="Ej: Helado de Pistacho">
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div class="form-group">
                     <label>💰 Precio</label>
-                    <input type="number" step="0.01" class="form-control" placeholder="0.00">
+                    <input type="number" step="0.01" class="form-control" id="productPrice" placeholder="0.00">
                 </div>
                 <div class="form-group">
                     <label>📦 Stock Inicial</label>
-                    <input type="number" class="form-control" placeholder="0">
+                    <input type="number" class="form-control" id="productStock" placeholder="0">
                 </div>
             </div>
             
             <div class="form-group">
                 <label>⚠️ Stock Mínimo</label>
-                <input type="number" class="form-control" placeholder="10">
+                <input type="number" class="form-control" id="productMinStock" placeholder="10">
+            </div>
+            
+            <div class="form-group">
+                <label>🎨 Icono</label>
+                <select class="form-control" id="productIcon">
+                    <option value="🍦">🍦 Helado</option>
+                    <option value="🍫">🍫 Chocolate</option>
+                    <option value="🍓">🍓 Fresa</option>
+                    <option value="🍪">🍪 Galleta</option>
+                    <option value="🌿">🌿 Menta</option>
+                    <option value="🥭">🥭 Mango</option>
+                    <option value="🍍">🍍 Piña</option>
+                    <option value="🍌">🍌 Banana</option>
+                </select>
             </div>
             
             <div style="display: flex; gap: 15px; margin-top: 25px;">
-                <button class="btn btn-success" style="flex: 1;" onclick="addProduct()">✅ Agregar Producto</button>
-                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal()">❌ Cancelar</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="addProduct()" id="addProductBtn">✅ Agregar Producto</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal('addProductModal')">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Producto -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editProductModal')">&times;</span>
+            <h3 style="margin-bottom: 25px;">✏️ Editar Producto</h3>
+            
+            <input type="hidden" id="editProductId">
+            
+            <div class="form-group">
+                <label>🍦 Nombre del Producto</label>
+                <input type="text" class="form-control" id="editProductName" placeholder="Ej: Helado de Pistacho">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>💰 Precio</label>
+                    <input type="number" step="0.01" class="form-control" id="editProductPrice" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>📦 Stock Actual</label>
+                    <input type="number" class="form-control" id="editProductStock" placeholder="0">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>⚠️ Stock Mínimo</label>
+                <input type="number" class="form-control" id="editProductMinStock" placeholder="10">
+            </div>
+            
+            <div class="form-group">
+                <label>🎨 Icono</label>
+                <select class="form-control" id="editProductIcon">
+                    <option value="🍦">🍦 Helado</option>
+                    <option value="🍫">🍫 Chocolate</option>
+                    <option value="🍓">🍓 Fresa</option>
+                    <option value="🍪">🍪 Galleta</option>
+                    <option value="🌿">🌿 Menta</option>
+                    <option value="🥭">🥭 Mango</option>
+                    <option value="🍍">🍍 Piña</option>
+                    <option value="🍌">🍌 Banana</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn btn-success" style="flex: 1;" onclick="updateProduct()" id="updateProductBtn">✅ Actualizar Producto</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal('editProductModal')">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Stock -->
+    <div id="restockModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('restockModal')">&times;</span>
+            <h3 style="margin-bottom: 25px;">📦 Agregar Stock</h3>
+            
+            <input type="hidden" id="restockProductId">
+            <input type="hidden" id="restockProductName">
+            
+            <div class="form-group">
+                <label>🍦 Producto</label>
+                <input type="text" class="form-control" id="restockProductDisplay" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label>📦 Stock Actual</label>
+                <input type="number" class="form-control" id="restockCurrentStock" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label>➕ Cantidad a Agregar</label>
+                <input type="number" class="form-control" id="restockQuantity" placeholder="0" min="1">
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn btn-success" style="flex: 1;" onclick="confirmRestock()" id="confirmRestockBtn">✅ Confirmar</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal('restockModal')">❌ Cancelar</button>
             </div>
         </div>
     </div>
@@ -1059,364 +1019,142 @@
     <!-- Modal para Procesar Pago -->
     <div id="paymentModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <span class="close" onclick="closeModal('paymentModal')">&times;</span>
             <h3 style="margin-bottom: 25px;">💰 Registrar Pago de Crédito</h3>
+            
+            <input type="hidden" id="paymentCustomerId">
             
             <div class="form-group">
                 <label>👤 Cliente</label>
-                <input type="text" class="form-control" value="Ana Martínez" readonly>
+                <input type="text" class="form-control" id="paymentCustomerName" readonly>
             </div>
             
             <div class="form-group">
                 <label>💰 Deuda Actual</label>
-                <input type="text" class="form-control" value="$35.00" readonly>
+                <input type="text" class="form-control" id="paymentCurrentDebt" readonly>
             </div>
             
             <div class="form-group">
                 <label>💵 Monto a Pagar</label>
-                <input type="number" step="0.01" class="form-control" placeholder="0.00">
+                <input type="number" step="0.01" class="form-control" id="paymentAmount" placeholder="0.00" min="0">
             </div>
             
             <div class="form-group">
                 <label>💳 Método de Pago</label>
-                <select class="form-control">
+                <select class="form-control" id="paymentMethod">
                     <option value="efectivo">💵 Efectivo</option>
                     <option value="transferencia">💳 Transferencia</option>
                 </select>
             </div>
             
             <div style="display: flex; gap: 15px; margin-top: 25px;">
-                <button class="btn btn-success" style="flex: 1;" onclick="confirmPayment()">✅ Confirmar Pago</button>
-                <button class="btn btn-warning" style="flex: 1;" onclick="closePaymentModal()">❌ Cancelar</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="confirmPayment()" id="confirmPaymentBtn">✅ Confirmar Pago</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal('paymentModal')">❌ Cancelar</button>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        // Importar Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    <!-- Modal para Agregar Cliente -->
+    <div id="addCustomerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addCustomerModal')">&times;</span>
+            <h3 style="margin-bottom: 25px;">👤 Agregar Nuevo Cliente</h3>
+            
+            <div class="form-group">
+                <label>👤 Nombre Completo</label>
+                <input type="text" class="form-control" id="customerName" placeholder="Ej: Juan Pérez">
+            </div>
+            
+            <div class="form-group">
+                <label>📞 Teléfono</label>
+                <input type="text" class="form-control" id="customerPhone" placeholder="Ej: 809-123-4567">
+            </div>
+            
+            <div class="form-group">
+                <label>📧 Correo Electrónico (Opcional)</label>
+                <input type="email" class="form-control" id="customerEmail" placeholder="Ej: cliente@ejemplo.com">
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn btn-success" style="flex: 1;" onclick="addCustomer()" id="addCustomerBtn">✅ Agregar Cliente</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal('addCustomerModal')">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-        // Configuración de Firebase
+    <!-- Modal para Registrar Vendedor -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h3 style="margin-bottom: 25px;">👨‍💼 Registrar Nuevo Vendedor</h3>
+            
+            <div class="form-group">
+                <label>👤 Nombre Completo</label>
+                <input type="text" class="form-control" id="vendorName" placeholder="Ej: Juan Pérez">
+            </div>
+            
+            <div class="form-group">
+                <label>📧 Correo Electrónico</label>
+                <input type="email" class="form-control" id="vendorEmail" placeholder="correo@ejemplo.com">
+            </div>
+            
+            <div class="form-group">
+                <label>🔑 Contraseña</label>
+                <input type="password" class="form-control" id="vendorPassword" placeholder="Contraseña">
+            </div>
+            
+            <div class="form-group">
+                <label>🔑 Confirmar Contraseña</label>
+                <input type="password" class="form-control" id="vendorConfirmPassword" placeholder="Confirmar Contraseña">
+            </div>
+            
+            <div class="form-group">
+                <label>👔 Rol</label>
+                <select class="form-control" id="vendorRole">
+                    <option value="vendedor">Vendedor</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn btn-success" style="flex: 1;" onclick="registerVendor()" id="registerVendorBtn">✅ Registrar</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal('registerModal')">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD-WV5eeZ-9DpTBYFFNr9_Q29Dg_hMyU6w",
             authDomain: "heladeria-pos.firebaseapp.com",
             databaseURL: "https://heladeria-pos-default-rtdb.firebaseio.com",
             projectId: "heladeria-pos",
-            storageBucket: "heladeria-pos.appspot.com",
+            storageBucket: "heladeria-pos.firebasestorage.app",
             messagingSenderId: "171441568131",
             appId: "1:171441568131:web:6f730a3e64b79735815eb6"
         };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
 
         // Variables globales
-        let currentUser = '';
+        let currentUser = null;
         let cart = [];
         let selectedPaymentMethod = 'efectivo';
         let products = {};
-        let clients = {};
+        let customers = {};
+        let sales = {};
+        let credits = {};
+        let vendors = {};
 
-        // Cargar productos desde Firebase
-        function loadProducts() {
-            const productsRef = ref(db, 'products');
-            onValue(productsRef, (snapshot) => {
-                products = snapshot.val() || {};
-                renderProducts();
-                renderInventory();
-            });
-        }
-
-        // Cargar clientes desde Firebase
-        function loadClients() {
-            const clientsRef = ref(db, 'clients');
-            onValue(clientsRef, (snapshot) => {
-                clients = snapshot.val() || {};
-                renderClients();
-            });
-        }
-
-        // Renderizar productos en POS
-        function renderProducts() {
-            const grid = document.querySelector('.products-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-            Object.values(products).forEach(product => {
-                const btn = document.createElement('button');
-                btn.className = 'product-card' + (product.stock <= product.minStock ? ' low-stock' : '');
-                btn.onclick = () => addToCart(product);
-                btn.innerHTML = `
-                    <div class="product-icon">${product.icon || '🍦'}</div>
-                    <div><strong>${product.name}</strong></div>
-                    <div>$${product.price.toFixed(2)}</div>
-                    <div>Stock: ${product.stock}${product.stock <= product.minStock ? ' ⚠️' : ''}</div>
-                `;
-                grid.appendChild(btn);
-            });
-        }
-
-        // 1. Eliminar productos del inventario
-        function deleteProduct(id) {
-            if (confirm('¿Seguro que deseas eliminar este producto?')) {
-                remove(ref(db, 'products/' + id)).then(() => {
-                    showNotification('🗑️ Producto eliminado exitosamente');
-                }).catch((error) => {
-                    showNotification('❌ Error al eliminar producto: ' + error.message, 'error');
-                });
-            }
-        }
-        window.deleteProduct = deleteProduct;
-
-        // 2. Eliminar ventas
-        function deleteSale(saleKey) {
-            if (confirm('¿Seguro que deseas eliminar esta venta?')) {
-                remove(ref(db, 'sales/' + saleKey)).then(() => {
-                    showNotification('🗑️ Venta eliminada exitosamente');
-                    // Forzar actualización de la vista
-                    setTimeout(() => renderRecentSales(), 500);
-                }).catch((error) => {
-                    showNotification('❌ Error al eliminar venta: ' + error.message, 'error');
-                });
-            }
-        }
-        window.deleteSale = deleteSale;
-
-        // 3. Eliminar deudas (créditos)
-        function deleteCredit(clientKey) {
-            if (confirm('¿Seguro que deseas eliminar la deuda de este cliente?')) {
-                remove(ref(db, 'credits/' + clientKey)).then(() => {
-                    showNotification('🗑️ Deuda eliminada exitosamente');
-                }).catch((error) => {
-                    showNotification('❌ Error al eliminar deuda: ' + error.message, 'error');
-                });
-            }
-        }
-        window.deleteCredit = deleteCredit;
-
-        // Renderizar inventario
-        function renderInventory() {
-            const tbody = document.querySelector('#inventory tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            Object.values(products).forEach(product => {
-                const tr = document.createElement('tr');
-                if (product.stock <= product.minStock) tr.style.background = 'rgba(255, 107, 107, 0.1)';
-                tr.innerHTML = `
-                    <td>${product.icon || '🍦'} ${product.name}</td>
-                    <td>$${product.price.toFixed(2)}</td>
-                    <td>${product.stock}</td>
-                    <td><span style="color: ${product.stock <= product.minStock ? '#e74c3c' : '#27ae60'};">${product.stock <= product.minStock ? '⚠️ Stock Bajo' : '✅ Stock OK'}</span></td>
-                    <td>
-                        <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct('${product.id}')">📦 +Stock</button>
-                        <button class="btn btn-warning" style="padding: 8px 12px; margin-right: 5px;" onclick="editProduct('${product.id}')">✏️ Editar</button>
-                        <button class="btn btn-danger" style="padding: 8px 12px;" onclick="deleteProduct('${product.id}')">🗑️ Eliminar</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-        window.renderInventory = renderInventory;
-
-        // Renderizar clientes en el select del POS
-        function renderClients() {
-            const select = document.querySelector('.cart select.form-control');
-            if (!select) return;
-            select.innerHTML = '<option value="">Cliente General</option>';
-            Object.values(clients).forEach(client => {
-                select.innerHTML += `<option value="${client.name}">${client.name}</option>`;
-            });
-        }
-
-        // Agregar producto a Firebase
-        window.addProduct = function() {
-            const name = document.querySelector('#addProductModal input[placeholder="Ej: Helado de Pistacho"]').value.trim();
-            const price = parseFloat(document.querySelector('#addProductModal input[placeholder="0.00"]').value);
-            const stock = parseInt(document.querySelector('#addProductModal input[placeholder="0"]').value);
-            const minStock = parseInt(document.querySelector('#addProductModal input[placeholder="10"]').value);
-            if (!name || isNaN(price) || isNaN(stock) || isNaN(minStock)) {
-                showNotification('❌ Complete todos los campos', 'error');
-                return;
-            }
-            const newId = 'H' + (Object.keys(products).length + 1).toString().padStart(3, '0');
-            set(ref(db, 'products/' + newId), {
-                id: newId,
-                name,
-                price,
-                stock,
-                minStock,
-                icon: '🍦'
-            }).then(() => {
-                showNotification('✅ Producto agregado exitosamente');
-                closeModal();
-            }).catch((err) => {
-                showNotification('❌ Error al agregar producto: ' + err.message, 'error');
-            });
-        }
-
-        // Agregar cliente a Firebase
-        window.addClient = function() {
-            const name = prompt('Nombre del cliente:');
-            if (!name) return;
-            const phone = prompt('Teléfono del cliente:');
-            const newClientRef = push(ref(db, 'clients'));
-            set(newClientRef, { name, phone }).then(() => {
-                showNotification('✅ Cliente agregado exitosamente');
-            });
-        }
-
-        // Restock producto
-        window.restockProduct = function(id) {
-            const quantity = prompt('¿Cuántas unidades desea agregar al stock?');
-            if (quantity && !isNaN(quantity) && quantity > 0) {
-                const product = products[id];
-                update(ref(db, 'products/' + id), { stock: product.stock + parseInt(quantity) }).then(() => {
-                    showNotification(`📦 Stock actualizado: +${quantity} unidades`);
-                });
-            }
-        }
-
-        // Editar producto
-        window.editProduct = function(id) {
-            const product = products[id];
-            const name = prompt('Nuevo nombre:', product.name);
-            const price = parseFloat(prompt('Nuevo precio:', product.price));
-            const stock = parseInt(prompt('Nuevo stock:', product.stock));
-            const minStock = parseInt(prompt('Nuevo stock mínimo:', product.minStock));
-            if (!name || isNaN(price) || isNaN(stock) || isNaN(minStock)) return;
-            update(ref(db, 'products/' + id), { name, price, stock, minStock }).then(() => {
-                showNotification('✏️ Producto editado exitosamente');
-            });
-        }
-
-        // Guardar venta en Firebase
-        function saveSale(sale) {
-            const salesRef = push(ref(db, 'sales'));
-            set(salesRef, sale);
-        }
-
-        // Guardar/actualizar crédito en Firebase
-        function updateClientCredit(clientName, amount, date) {
-            // Buscar cliente por nombre
-            let clientKey = null;
-            Object.entries(clients).forEach(([key, c]) => {
-                if (c.name === clientName) clientKey = key;
-            });
-            if (!clientKey) return;
-            // Actualizar deuda
-            const creditRef = ref(db, `credits/${clientKey}`);
-            onValue(creditRef, (snapshot) => {
-                let current = snapshot.val() || { total: 0, lastDate: '', history: [] };
-                const newTotal = (parseFloat(current.total) || 0) + amount;
-                const newHistory = current.history || [];
-                newHistory.push({ amount, date });
-                set(creditRef, { total: newTotal, lastDate: date, history: newHistory });
-            }, { onlyOnce: true });
-        }
-
-        // Renderizar ventas recientes en dashboard
-        function renderRecentSales() {
-            const tbody = document.getElementById('recentSalesTable');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            const salesRef = ref(db, 'sales');
-            onValue(salesRef, (snapshot) => {
-                const sales = Object.values(snapshot.val() || {}).sort((a, b) => b.timestamp - a.timestamp).slice(0, 10);
-                sales.forEach(sale => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${sale.time}</td>
-                        <td>${sale.vendor}</td>
-                        <td>${sale.client || 'Cliente General'}</td>
-                        <td>${sale.products.map(p => `${p.name} (${p.quantity})`).join(', ')}</td>
-                        <td>$${sale.total.toFixed(2)}</td>
-                        <td>${sale.paymentMethod}</td>
-                        <td><button class="btn btn-danger" style="padding: 6px 10px;" onclick="deleteSale('${sale.id}')">🗑️</button></td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            });
-        }
-        window.renderRecentSales = renderRecentSales;
-
-        // Renderizar créditos en la tabla de créditos
-        function renderCredits() {
-            const tbody = document.querySelector('#credits tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            const creditsRef = ref(db, 'credits');
-            onValue(creditsRef, (snapshot) => {
-                const credits = snapshot.val() || {};
-                Object.entries(credits).forEach(([clientKey, credit]) => {
-                    const client = clients[clientKey];
-                    if (!client) return;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>${client.name}</strong><br><small>📞 ${client.phone || ''}</small></td>
-                        <td><strong style="color: #e74c3c;">$${(credit.total || 0).toFixed(2)}</strong></td>
-                        <td>${credit.lastDate || ''}</td>
-                        <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
-                        <td>
-                            <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
-                            <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="viewCreditHistory()">📋 Historial</button>
-                            <button class="btn btn-danger" style="padding: 8px 12px;" onclick="deleteCredit('${clientKey}')">🗑️ Eliminar</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            });
-        }
-        window.renderCredits = renderCredits;
-
-        // Calcular y mostrar totales del dashboard en tiempo real
-        function renderDashboardTotals() {
-            const totalSalesEl = document.getElementById('totalSales');
-            const cashSalesEl = document.getElementById('cashSales');
-            const transferSalesEl = document.getElementById('transferSales');
-            const creditSalesEl = document.getElementById('creditSales');
-            if (!totalSalesEl || !cashSalesEl || !transferSalesEl || !creditSalesEl) return;
-            const salesRef = ref(db, 'sales');
-            onValue(salesRef, (snapshot) => {
-                const sales = Object.values(snapshot.val() || {});
-                // Filtrar ventas del día actual
-                const today = new Date().toISOString().slice(0, 10);
-                let total = 0, efectivo = 0, transferencia = 0, credito = 0;
-                sales.forEach(sale => {
-                    const saleDate = new Date(sale.timestamp).toISOString().slice(0, 10);
-                    if (saleDate === today) {
-                        total += sale.total;
-                        if (sale.paymentMethod === 'efectivo') efectivo += sale.total;
-                        else if (sale.paymentMethod === 'transferencia') transferencia += sale.total;
-                        else if (sale.paymentMethod === 'crédito' || sale.paymentMethod === 'credito') credito += sale.total;
-                    }
-                });
-                totalSalesEl.textContent = `$${total.toFixed(2)}`;
-                cashSalesEl.textContent = `$${efectivo.toFixed(2)}`;
-                transferSalesEl.textContent = `$${transferencia.toFixed(2)}`;
-                creditSalesEl.textContent = `$${credito.toFixed(2)}`;
-            });
-        }
-
-        // Inicialización extendida
+        // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
-            loadProducts();
-            loadClients();
-            renderRecentSales();
-            renderCredits();
-            renderDashboardTotals();
+            // Configurar listeners de Firebase
+            setupFirebaseListeners();
             
-            // Selección de vendedor
-            const vendorCards = document.querySelectorAll('.vendor-card');
-            const loginBtn = document.getElementById('loginBtn');
-
-            vendorCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    vendorCards.forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    loginBtn.disabled = false;
-                    currentUser = this.dataset.vendor;
-                });
-            });
-
             // Selección de método de pago
             document.querySelectorAll('.payment-method').forEach(method => {
                 method.addEventListener('click', function() {
@@ -1425,53 +1163,153 @@
                     selectedPaymentMethod = this.dataset.method || 'efectivo';
                 });
             });
-
-            // Botones de navegación corregidos
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
+            
+            // Verificar si hay un usuario autenticado
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // Usuario autenticado
+                    currentUser = user;
+                    document.getElementById('currentUser').textContent = user.displayName || user.email;
+                    showSection('mainSystem');
+                    showNotification(`👋 Bienvenido ${user.displayName || user.email}!`);
                     
-                    let subSection = 'dashboard';
-                    if (this.textContent.includes('Punto de Venta')) subSection = 'pos';
-                    else if (this.textContent.includes('Inventario')) subSection = 'inventory';
-                    else if (this.textContent.includes('Créditos')) subSection = 'credits';
-                    
-                    document.querySelectorAll('.subsection').forEach(section => section.classList.remove('active'));
-                    const targetSection = document.getElementById(subSection);
-                    if (targetSection) {
-                        targetSection.classList.add('active');
-                        
-                        // Llamar a la función de renderizado adecuada
-                        if (subSection === 'inventory') {
-                            setTimeout(() => renderInventory(), 100);
-                        }
-                        if (subSection === 'credits') {
-                            setTimeout(() => renderCredits(), 100);
-                        }
-                    }
-                });
+                    // Cargar datos del usuario
+                    loadUserData(user.uid);
+                } else {
+                    // No hay usuario autenticado
+                    currentUser = null;
+                    showSection('loginSection');
+                }
             });
         });
 
-        // Funciones de navegación
-        function loginVendor() {
-            if (currentUser) {
-                document.getElementById('currentUser').textContent = currentUser;
-                showSection('mainSystem');
-                showNotification(`👋 Bienvenido ${currentUser}!`);
-            }
+        // Configurar listeners de Firebase
+        function setupFirebaseListeners() {
+            // Escuchar cambios en productos
+            database.ref('products').on('value', snapshot => {
+                products = snapshot.val() || {};
+                renderProducts();
+                renderInventory();
+                checkLowStock();
+            });
+            
+            // Escuchar cambios en clientes
+            database.ref('customers').on('value', snapshot => {
+                customers = snapshot.val() || {};
+                renderCustomerSelect();
+                renderCredits();
+            });
+            
+            // Escuchar cambios en ventas
+            database.ref('sales').on('value', snapshot => {
+                sales = snapshot.val() || {};
+                renderRecentSales();
+                updateDashboardStats();
+            });
+            
+            // Escuchar cambios en créditos
+            database.ref('credits').on('value', snapshot => {
+                credits = snapshot.val() || {};
+                renderCredits();
+                updateCreditStats();
+            });
+            
+            // Escuchar cambios en vendedores
+            database.ref('vendors').on('value', snapshot => {
+                vendors = snapshot.val() || {};
+            });
         }
-        window.loginVendor = loginVendor;
+
+        // Funciones de autenticación
+        function loginUser() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (!email || !password) {
+                showNotification('❌ Por favor ingrese correo y contraseña', 'error');
+                return;
+            }
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="loading"></span> Iniciando sesión...';
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    // Inicio de sesión exitoso
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Iniciar Sesión';
+                })
+                .catch(error => {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Iniciar Sesión';
+                    showNotification(`❌ Error al iniciar sesión: ${error.message}`, 'error');
+                });
+        }
 
         function logout() {
-            currentUser = '';
-            cart = [];
-            showSection('loginSection');
-            showNotification('👋 Sesión cerrada correctamente');
+            auth.signOut().then(() => {
+                showNotification('👋 Sesión cerrada correctamente');
+                cart = [];
+                renderCart();
+            }).catch(error => {
+                showNotification(`❌ Error al cerrar sesión: ${error.message}`, 'error');
+            });
         }
-        window.logout = logout;
 
+        function registerVendor() {
+            const name = document.getElementById('vendorName').value;
+            const email = document.getElementById('vendorEmail').value;
+            const password = document.getElementById('vendorPassword').value;
+            const confirmPassword = document.getElementById('vendorConfirmPassword').value;
+            const role = document.getElementById('vendorRole').value;
+            const registerBtn = document.getElementById('registerVendorBtn');
+            
+            if (!name || !email || !password || !confirmPassword) {
+                showNotification('❌ Por favor complete todos los campos', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('❌ Las contraseñas no coinciden', 'error');
+                return;
+            }
+            
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<span class="loading"></span> Registrando...';
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    // Usuario creado, ahora guardar información adicional
+                    const user = userCredential.user;
+                    
+                    // Actualizar perfil con nombre
+                    return user.updateProfile({
+                        displayName: name
+                    }).then(() => {
+                        // Guardar información adicional en la base de datos
+                        return database.ref(`vendors/${user.uid}`).set({
+                            name: name,
+                            email: email,
+                            role: role,
+                            createdAt: firebase.database.ServerValue.TIMESTAMP
+                        });
+                    });
+                })
+                .then(() => {
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = 'Registrar';
+                    showNotification('✅ Vendedor registrado exitosamente');
+                    closeModal('registerModal');
+                })
+                .catch(error => {
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = 'Registrar';
+                    showNotification(`❌ Error al registrar: ${error.message}`, 'error');
+                });
+        }
+
+        // Funciones de navegación
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
@@ -1483,43 +1321,40 @@
             }
         }
 
-        // --- CORRECCIÓN DE NAVEGACIÓN ENTRE SECCIONES ---
-        // document.querySelectorAll('.nav-btn').forEach(btn => {
-        //     btn.addEventListener('click', function(e) {
-        //         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        //         this.classList.add('active');
-        //         const subSection = this.getAttribute('onclick').match(/'([^']+)'/)[1];
-        //         showSubSection(subSection, e);
-        //     });
-        // });
-
-        function showSubSection(subSectionId, evt) {
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            if (evt && evt.target) evt.target.classList.add('active');
-            document.querySelectorAll('.subsection').forEach(section => section.classList.remove('active'));
+        function showSubSection(subSectionId) {
+            // Remover clase active de botones
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Ocultar todas las subsecciones
+            document.querySelectorAll('.subsection').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostrar subsección seleccionada
             document.getElementById(subSectionId).classList.add('active');
-
-            // Llamar a la función de renderizado adecuada
-            if (subSectionId === 'inventory') {
-                renderInventory();
-            }
-            if (subSectionId === 'credits') {
-                renderCredits();
-            }
+            
+            // Activar botón correspondiente
+            event.target.classList.add('active');
         }
-        window.showSubSection = showSubSection;
 
         // Funciones del carrito
-        // Modificar addToCart para usar el stock real de Firebase
         function addToCart(product) {
-            const prod = products[product.id];
-            if (!prod || prod.stock <= 0) {
+            if (!product || !product.id) return;
+            
+            const productData = products[product.id];
+            if (!productData) return;
+            
+            if (productData.stock <= 0) {
                 showNotification('❌ Producto sin stock disponible', 'error');
                 return;
             }
+            
             const existingItem = cart.find(item => item.id === product.id);
+            
             if (existingItem) {
-                if (existingItem.quantity < prod.stock) {
+                if (existingItem.quantity < productData.stock) {
                     existingItem.quantity++;
                 } else {
                     showNotification('❌ No hay suficiente stock disponible', 'error');
@@ -1527,24 +1362,25 @@
                 }
             } else {
                 cart.push({
-                    id: prod.id,
-                    name: prod.name,
-                    price: prod.price,
+                    id: product.id,
+                    name: productData.name,
+                    price: productData.price,
                     quantity: 1,
-                    maxStock: prod.stock
+                    maxStock: productData.stock
                 });
             }
+            
             renderCart();
-            showNotification(`✅ ${prod.name} agregado al carrito`);
+            showNotification(`✅ ${productData.name} agregado al carrito`);
         }
-        window.addToCart = addToCart;
 
-        // Modificar renderCart para actualizar cantidades y eliminar productos
         function renderCart() {
             const cartItems = document.getElementById('cartItems');
             if (!cartItems) return;
+            
             cartItems.innerHTML = '';
             let total = 0;
+            
             cart.forEach((item, index) => {
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
@@ -1560,155 +1396,723 @@
                         <button onclick="removeFromCart(${index})" style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">🗑️</button>
                     </div>
                 `;
+                
                 cartItems.appendChild(cartItem);
                 total += item.price * item.quantity;
             });
-            document.querySelector('.cart-total').textContent = `Total: $${total.toFixed(2)}`;
+            
+            document.getElementById('cartTotal').textContent = `Total: $${total.toFixed(2)}`;
         }
-        window.renderCart = renderCart;
 
         function changeQuantity(index, change) {
             const item = cart[index];
-            const prod = products[item.id];
+            if (!item) return;
+            
             const newQuantity = item.quantity + change;
+            
             if (newQuantity <= 0) {
                 removeFromCart(index);
                 return;
             }
-            if (newQuantity > prod.stock) {
+            
+            if (newQuantity > item.maxStock) {
                 showNotification('❌ No hay suficiente stock disponible', 'error');
                 return;
             }
+            
             item.quantity = newQuantity;
             renderCart();
         }
-        window.changeQuantity = changeQuantity;
 
         function removeFromCart(index) {
             const item = cart[index];
+            if (!item) return;
+            
             cart.splice(index, 1);
             renderCart();
             showNotification(`🗑️ ${item.name} eliminado del carrito`);
         }
-        window.removeFromCart = removeFromCart;
 
         function clearCart() {
+            if (cart.length === 0) {
+                showNotification('🛒 El carrito ya está vacío');
+                return;
+            }
+            
             cart = [];
             renderCart();
             showNotification('🗑️ Carrito limpiado');
         }
-        window.clearCart = clearCart;
 
-        // Procesar venta y descontar stock en Firebase
         function processSale() {
             if (cart.length === 0) {
                 showNotification('❌ El carrito está vacío', 'error');
                 return;
             }
+            
+            const customerSelect = document.getElementById('customerSelect');
+            const customerId = customerSelect.value;
+            const customerName = customerSelect.options[customerSelect.selectedIndex].text;
+            
+            const processSaleBtn = document.getElementById('processSaleBtn');
+            processSaleBtn.disabled = true;
+            processSaleBtn.innerHTML = '<span class="loading"></span> Procesando...';
+            
+            // Calcular total
             let total = 0;
+            const saleItems = [];
+            
             cart.forEach(item => {
                 total += item.price * item.quantity;
+                saleItems.push({
+                    productId: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                });
             });
-            const clientSelect = document.querySelector('.cart select.form-control');
-            const client = clientSelect ? clientSelect.value : '';
-            const now = new Date();
+            
+            // Verificar si es crédito
+            const isCredit = selectedPaymentMethod === 'credito';
+            
+            // Crear objeto de venta
             const sale = {
-                id: push(ref(db, 'sales')).key, // Asignar un ID único
-                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                vendor: currentUser,
-                client,
-                products: cart.map(item => ({ name: item.name, quantity: item.quantity })),
-                total,
-                paymentMethod: selectedPaymentMethod,
-                timestamp: now.getTime()
+                items: saleItems,
+                total: total,
+                paymentMethod: isCredit ? 'pendiente' : selectedPaymentMethod,
+                customerId: customerId || null,
+                customerName: customerName,
+                vendorId: currentUser.uid,
+                vendorName: currentUser.displayName || currentUser.email,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                status: isCredit ? 'credito' : 'completada'
             };
-            // Descontar stock en Firebase
-            const updates = {};
-            let stockOk = true;
-            cart.forEach(item => {
-                const prod = products[item.id];
-                if (prod.stock < item.quantity) stockOk = false;
-                updates[`products/${item.id}/stock`] = prod.stock - item.quantity;
-            });
-            if (!stockOk) {
-                showNotification('❌ Stock insuficiente para uno o más productos', 'error');
-                return;
-            }
-            set(ref(db, 'sales/' + sale.id), sale).then(() => {
-                update(ref(db), updates).then(() => {
-                    clearCart();
-                    showNotification(`✅ Venta procesada: $${total.toFixed(2)} (${selectedPaymentMethod})`);
+            
+            // Guardar la venta en Firebase
+            const newSaleRef = database.ref('sales').push();
+            newSaleRef.set(sale)
+                .then(() => {
+                    // Actualizar stock de productos
+                    const updates = {};
+                    cart.forEach(item => {
+                        updates[`products/${item.id}/stock`] = products[item.id].stock - item.quantity;
+                    });
+                    
+                    return database.ref().update(updates);
+                })
+                .then(() => {
+                    // Si es crédito, agregar a la lista de créditos
+                    if (isCredit) {
+                        const creditRef = database.ref('credits').push();
+                        return creditRef.set({
+                            customerId: customerId,
+                            customerName: customerName,
+                            saleId: newSaleRef.key,
+                            amount: total,
+                            paid: 0,
+                            balance: total,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP,
+                            status: 'pendiente'
+                        });
+                    }
+                })
+                .then(() => {
+                    // Limpiar carrito y mostrar notificación
+                    cart = [];
+                    renderCart();
+                    processSaleBtn.disabled = false;
+                    processSaleBtn.textContent = '💰 Procesar Venta';
+                    showNotification(`✅ Venta procesada: $${total.toFixed(2)} (${isCredit ? 'Crédito' : selectedPaymentMethod})`);
+                })
+                .catch(error => {
+                    processSaleBtn.disabled = false;
+                    processSaleBtn.textContent = '💰 Procesar Venta';
+                    showNotification(`❌ Error al procesar venta: ${error.message}`, 'error');
                 });
+        }
+
+        // Funciones de productos
+        function renderProducts() {
+            const productsGrid = document.getElementById('productsGrid');
+            if (!productsGrid) return;
+            
+            productsGrid.innerHTML = '';
+            
+            Object.keys(products).forEach(productId => {
+                const product = products[productId];
+                const isLowStock = product.stock <= product.minStock;
+                
+                const productCard = document.createElement('button');
+                productCard.className = `product-card ${isLowStock ? 'low-stock' : ''}`;
+                productCard.onclick = () => addToCart({id: productId});
+                productCard.innerHTML = `
+                    <div class="product-icon">${product.icon || '🍦'}</div>
+                    <div><strong>${product.name}</strong></div>
+                    <div>$${product.price.toFixed(2)}</div>
+                    <div>Stock: ${product.stock} ${isLowStock ? '⚠️' : ''}</div>
+                `;
+                
+                productsGrid.appendChild(productCard);
             });
         }
-        window.processSale = processSale;
 
-        // Procesar pago de crédito
-        window.processPayment = function(clientKey) {
-            const creditRef = ref(db, `credits/${clientKey}`);
-            onValue(creditRef, (snapshot) => {
-                const credit = snapshot.val();
-                if (!credit || !credit.total) return;
-                const amount = parseFloat(prompt('Monto a pagar:', credit.total));
-                if (!amount || isNaN(amount) || amount <= 0) return;
-                const newTotal = credit.total - amount;
-                const now = new Date();
-                set(creditRef, {
-                    total: newTotal,
-                    lastDate: now.toISOString().slice(0, 10),
-                    history: [...(credit.history || []), { amount: -amount, date: now.toISOString().slice(0, 10) }]
-                }).then(() => {
-                    showNotification('💰 Pago registrado exitosamente');
-                });
-            }, { onlyOnce: true });
+        function searchProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const productCards = document.querySelectorAll('.products-grid .product-card');
+            
+            productCards.forEach(card => {
+                const productName = card.querySelector('div:nth-child(2)').textContent.toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         }
 
-        // Ver historial de crédito
-        window.viewCreditHistory = function(clientKey) {
-            const credit = (clients[clientKey] && clients[clientKey].history) || [];
-            alert('Historial de crédito no implementado visualmente, pero puedes consultar en Firebase.');
-        }
-
-        // Funciones de inventario
         function showAddProductModal() {
             document.getElementById('addProductModal').style.display = 'block';
         }
 
-        function closeModal() {
-            document.getElementById('addProductModal').style.display = 'none';
-        }
-
         function addProduct() {
-            showNotification('✅ Producto agregado exitosamente');
-            closeModal();
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const stock = parseInt(document.getElementById('productStock').value);
+            const minStock = parseInt(document.getElementById('productMinStock').value);
+            const icon = document.getElementById('productIcon').value;
+            const addProductBtn = document.getElementById('addProductBtn');
+            
+            if (!name || isNaN(price) || isNaN(stock) || isNaN(minStock)) {
+                showNotification('❌ Por favor complete todos los campos correctamente', 'error');
+                return;
+            }
+            
+            addProductBtn.disabled = true;
+            addProductBtn.innerHTML = '<span class="loading"></span> Agregando...';
+            
+            const newProduct = {
+                name: name,
+                price: price,
+                stock: stock,
+                minStock: minStock,
+                icon: icon,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            database.ref('products').push(newProduct)
+                .then(() => {
+                    showNotification('✅ Producto agregado exitosamente');
+                    closeModal('addProductModal');
+                    addProductBtn.disabled = false;
+                    addProductBtn.textContent = '✅ Agregar Producto';
+                    
+                    // Limpiar formulario
+                    document.getElementById('productName').value = '';
+                    document.getElementById('productPrice').value = '';
+                    document.getElementById('productStock').value = '';
+                    document.getElementById('productMinStock').value = '';
+                })
+                .catch(error => {
+                    showNotification(`❌ Error al agregar producto: ${error.message}`, 'error');
+                    addProductBtn.disabled = false;
+                    addProductBtn.textContent = '✅ Agregar Producto';
+                });
         }
 
-        function restockProduct() {
-            const quantity = prompt('¿Cuántas unidades desea agregar al stock?');
-            if (quantity && !isNaN(quantity) && quantity > 0) {
-                showNotification(`📦 Stock actualizado: +${quantity} unidades`);
+        function editProduct(productId) {
+            const product = products[productId];
+            if (!product) return;
+            
+            document.getElementById('editProductId').value = productId;
+            document.getElementById('editProductName').value = product.name;
+            document.getElementById('editProductPrice').value = product.price;
+            document.getElementById('editProductStock').value = product.stock;
+            document.getElementById('editProductMinStock').value = product.minStock || 10;
+            document.getElementById('editProductIcon').value = product.icon || '🍦';
+            
+            document.getElementById('editProductModal').style.display = 'block';
+        }
+
+        function updateProduct() {
+            const productId = document.getElementById('editProductId').value;
+            const name = document.getElementById('editProductName').value;
+            const price = parseFloat(document.getElementById('editProductPrice').value);
+            const stock = parseInt(document.getElementById('editProductStock').value);
+            const minStock = parseInt(document.getElementById('editProductMinStock').value);
+            const icon = document.getElementById('editProductIcon').value;
+            const updateProductBtn = document.getElementById('updateProductBtn');
+            
+            if (!productId || !name || isNaN(price) || isNaN(stock) || isNaN(minStock)) {
+                showNotification('❌ Por favor complete todos los campos correctamente', 'error');
+                return;
+            }
+            
+            updateProductBtn.disabled = true;
+            updateProductBtn.innerHTML = '<span class="loading"></span> Actualizando...';
+            
+            const updates = {
+                name: name,
+                price: price,
+                stock: stock,
+                minStock: minStock,
+                icon: icon,
+                updatedAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            database.ref(`products/${productId}`).update(updates)
+                .then(() => {
+                    showNotification('✅ Producto actualizado exitosamente');
+                    closeModal('editProductModal');
+                    updateProductBtn.disabled = false;
+                    updateProductBtn.textContent = '✅ Actualizar Producto';
+                })
+                .catch(error => {
+                    showNotification(`❌ Error al actualizar producto: ${error.message}`, 'error');
+                    updateProductBtn.disabled = false;
+                    updateProductBtn.textContent = '✅ Actualizar Producto';
+                });
+        }
+
+        function restockProduct(productId) {
+            const product = products[productId];
+            if (!product) return;
+            
+            document.getElementById('restockProductId').value = productId;
+            document.getElementById('restockProductName').value = product.name;
+            document.getElementById('restockProductDisplay').value = product.name;
+            document.getElementById('restockCurrentStock').value = product.stock;
+            document.getElementById('restockQuantity').value = '';
+            
+            document.getElementById('restockModal').style.display = 'block';
+        }
+
+        function confirmRestock() {
+            const productId = document.getElementById('restockProductId').value;
+            const quantity = parseInt(document.getElementById('restockQuantity').value);
+            const confirmRestockBtn = document.getElementById('confirmRestockBtn');
+            
+            if (!productId || isNaN(quantity) || quantity <= 0) {
+                showNotification('❌ Por favor ingrese una cantidad válida', 'error');
+                return;
+            }
+            
+            confirmRestockBtn.disabled = true;
+            confirmRestockBtn.innerHTML = '<span class="loading"></span> Actualizando...';
+            
+            const currentStock = parseInt(document.getElementById('restockCurrentStock').value);
+            const newStock = currentStock + quantity;
+            
+            database.ref(`products/${productId}/stock`).set(newStock)
+                .then(() => {
+                    showNotification(`✅ Stock actualizado: +${quantity} unidades`);
+                    closeModal('restockModal');
+                    confirmRestockBtn.disabled = false;
+                    confirmRestockBtn.textContent = '✅ Confirmar';
+                })
+                .catch(error => {
+                    showNotification(`❌ Error al actualizar stock: ${error.message}`, 'error');
+                    confirmRestockBtn.disabled = false;
+                    confirmRestockBtn.textContent = '✅ Confirmar';
+                });
+        }
+
+        function checkLowStock() {
+            const lowStockProducts = [];
+            
+            Object.keys(products).forEach(productId => {
+                const product = products[productId];
+                if (product.stock <= (product.minStock || 10)) {
+                    lowStockProducts.push(`${product.name} (${product.stock} unidades)`);
+                }
+            });
+            
+            const lowStockAlert = document.getElementById('lowStockAlert');
+            const lowStockProductsSpan = document.getElementById('lowStockProducts');
+            
+            if (lowStockProducts.length > 0) {
+                lowStockProductsSpan.textContent = lowStockProducts.join(', ');
+                lowStockAlert.style.display = 'block';
+            } else {
+                lowStockAlert.style.display = 'none';
             }
         }
 
-        function editProduct() {
-            showNotification('✏️ Función de edición disponible');
+        // Funciones de inventario
+        function renderInventory() {
+            const inventoryTable = document.getElementById('inventoryTable');
+            if (!inventoryTable) return;
+            
+            inventoryTable.innerHTML = '';
+            
+            Object.keys(products).forEach(productId => {
+                const product = products[productId];
+                const isLowStock = product.stock <= (product.minStock || 10);
+                
+                const row = document.createElement('tr');
+                if (isLowStock) {
+                    row.style.background = 'rgba(255, 107, 107, 0.1)';
+                }
+                
+                row.innerHTML = `
+                    <td>${product.icon || '🍦'} ${product.name}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td>${product.stock}</td>
+                    <td><span style="color: ${isLowStock ? '#e74c3c' : '#27ae60'};">${isLowStock ? '⚠️ Stock Bajo' : '✅ Stock OK'}</span></td>
+                    <td>
+                        <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct('${productId}')">📦 +Stock</button>
+                        <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct('${productId}')">✏️ Editar</button>
+                    </td>
+                `;
+                
+                inventoryTable.appendChild(row);
+            });
+        }
+
+        function searchInventory() {
+            const searchTerm = document.getElementById('inventorySearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#inventoryTable tr');
+            
+            rows.forEach(row => {
+                const productName = row.querySelector('td:first-child').textContent.toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Funciones de clientes
+        function renderCustomerSelect() {
+            const customerSelect = document.getElementById('customerSelect');
+            if (!customerSelect) return;
+            
+            // Guardar selección actual
+            const currentValue = customerSelect.value;
+            
+            // Limpiar opciones (excepto la primera)
+            while (customerSelect.options.length > 1) {
+                customerSelect.remove(1);
+            }
+            
+            // Agregar clientes
+            Object.keys(customers).forEach(customerId => {
+                const customer = customers[customerId];
+                const option = document.createElement('option');
+                option.value = customerId;
+                option.textContent = customer.name;
+                customerSelect.appendChild(option);
+            });
+            
+            // Restaurar selección si existe
+            if (currentValue && customerSelect.querySelector(`option[value="${currentValue}"]`)) {
+                customerSelect.value = currentValue;
+            }
+        }
+
+        function showAddCustomerModal() {
+            document.getElementById('addCustomerModal').style.display = 'block';
+        }
+
+        function addCustomer() {
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            const email = document.getElementById('customerEmail').value;
+            const addCustomerBtn = document.getElementById('addCustomerBtn');
+            
+            if (!name || !phone) {
+                showNotification('❌ Por favor ingrese al menos nombre y teléfono', 'error');
+                return;
+            }
+            
+            addCustomerBtn.disabled = true;
+            addCustomerBtn.innerHTML = '<span class="loading"></span> Agregando...';
+            
+            const newCustomer = {
+                name: name,
+                phone: phone,
+                email: email || '',
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            database.ref('customers').push(newCustomer)
+                .then(() => {
+                    showNotification('✅ Cliente agregado exitosamente');
+                    closeModal('addCustomerModal');
+                    addCustomerBtn.disabled = false;
+                    addCustomerBtn.textContent = '✅ Agregar Cliente';
+                    
+                    // Limpiar formulario
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('customerPhone').value = '';
+                    document.getElementById('customerEmail').value = '';
+                })
+                .catch(error => {
+                    showNotification(`❌ Error al agregar cliente: ${error.message}`, 'error');
+                    addCustomerBtn.disabled = false;
+                    addCustomerBtn.textContent = '✅ Agregar Cliente';
+                });
         }
 
         // Funciones de créditos
-        function addCreditPayment() {
-            showNotification('💰 Función de pago de crédito disponible');
+        function renderCredits() {
+            const creditsTable = document.getElementById('creditsTable');
+            if (!creditsTable) return;
+            
+            creditsTable.innerHTML = '';
+            
+            Object.keys(credits).forEach(creditId => {
+                const credit = credits[creditId];
+                const customer = customers[credit.customerId] || {};
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <strong>${customer.name || 'Cliente desconocido'}</strong><br>
+                        <small>📞 ${customer.phone || 'Sin teléfono'}</small>
+                    </td>
+                    <td><strong style="color: #e74c3c;">$${credit.balance.toFixed(2)}</strong></td>
+                    <td>${formatDate(credit.timestamp)}</td>
+                    <td><span style="color: #f39c12;">⏰ ${credit.status === 'pagado' ? '✅ Pagado' : 'Pendiente'}</span></td>
+                    <td>
+                        <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment('${creditId}')">💰 Pagar</button>
+                        <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory('${credit.customerId}')">📋 Historial</button>
+                    </td>
+                `;
+                
+                creditsTable.appendChild(row);
+            });
+        }
+
+        function searchCredits() {
+            const searchTerm = document.getElementById('creditSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#creditsTable tr');
+            
+            rows.forEach(row => {
+                const customerName = row.querySelector('td:first-child strong').textContent.toLowerCase();
+                if (customerName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function updateCreditStats() {
+            let totalCredits = 0;
+            let debtCustomers = 0;
+            let totalDebt = 0;
+            let oldestCredit = null;
+            let biggestDebtor = { name: 'Ninguno', amount: 0 };
+            
+            Object.keys(credits).forEach(creditId => {
+                const credit = credits[creditId];
+                if (credit.status !== 'pagado') {
+                    totalCredits += credit.amount;
+                    totalDebt += credit.balance;
+                    debtCustomers++;
+                    
+                    if (!oldestCredit || credit.timestamp < oldestCredit.timestamp) {
+                        oldestCredit = credit;
+                    }
+                    
+                    if (credit.balance > biggestDebtor.amount) {
+                        const customer = customers[credit.customerId] || {};
+                        biggestDebtor = {
+                            name: customer.name || 'Cliente desconocido',
+                            amount: credit.balance
+                        };
+                    }
+                }
+            });
+            
+            document.getElementById('totalCredits').textContent = `$${totalCredits.toFixed(2)}`;
+            document.getElementById('debtCustomers').textContent = debtCustomers;
+            document.getElementById('avgDebt').textContent = debtCustomers > 0 ? `$${(totalDebt / debtCustomers).toFixed(2)}` : '$0.00';
+            
+            document.getElementById('totalToCollect').textContent = `$${totalDebt.toFixed(2)}`;
+            document.getElementById('oldestCredit').textContent = oldestCredit ? formatDate(oldestCredit.timestamp) : 'N/A';
+            document.getElementById('biggestDebtor').textContent = `${biggestDebtor.name} ($${biggestDebtor.amount.toFixed(2)})`;
+        }
+
+        function showAddCreditPaymentModal() {
+            document.getElementById('paymentModal').style.display = 'block';
+        }
+
+        function processPayment(creditId) {
+            const credit = credits[creditId];
+            if (!credit) return;
+            
+            const customer = customers[credit.customerId] || {};
+            
+            document.getElementById('paymentCustomerId').value = credit.customerId;
+            document.getElementById('paymentCustomerName').value = customer.name || 'Cliente desconocido';
+            document.getElementById('paymentCurrentDebt').value = `$${credit.balance.toFixed(2)}`;
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentMethod').value = 'efectivo';
+            
+            document.getElementById('paymentModal').style.display = 'block';
         }
 
         function confirmPayment() {
-            showNotification('💰 Pago registrado exitosamente');
-            closePaymentModal();
+            const customerId = document.getElementById('paymentCustomerId').value;
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const method = document.getElementById('paymentMethod').value;
+            const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+            
+            if (!customerId || isNaN(amount) || amount <= 0) {
+                showNotification('❌ Por favor ingrese un monto válido', 'error');
+                return;
+            }
+            
+            confirmPaymentBtn.disabled = true;
+            confirmPaymentBtn.innerHTML = '<span class="loading"></span> Procesando...';
+            
+            // Encontrar todos los créditos del cliente
+            const customerCredits = [];
+            Object.keys(credits).forEach(creditId => {
+                const credit = credits[creditId];
+                if (credit.customerId === customerId && credit.status !== 'pagado') {
+                    customerCredits.push({
+                        id: creditId,
+                        ...credit
+                    });
+                }
+            });
+            
+            // Ordenar créditos por fecha (más antiguo primero)
+            customerCredits.sort((a, b) => a.timestamp - b.timestamp);
+            
+            let remainingAmount = amount;
+            const updates = {};
+            const paymentRecords = [];
+            
+            // Aplicar pago a los créditos
+            for (const credit of customerCredits) {
+                if (remainingAmount <= 0) break;
+                
+                const paymentAmount = Math.min(remainingAmount, credit.balance);
+                const newBalance = credit.balance - paymentAmount;
+                const isPaid = newBalance <= 0;
+                
+                updates[`credits/${credit.id}/balance`] = newBalance;
+                updates[`credits/${credit.id}/status`] = isPaid ? 'pagado' : 'pendiente';
+                updates[`credits/${credit.id}/paid`] = credit.paid + paymentAmount;
+                
+                paymentRecords.push({
+                    creditId: credit.id,
+                    amount: paymentAmount,
+                    method: method,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    processedBy: currentUser.uid
+                });
+                
+                remainingAmount -= paymentAmount;
+            }
+            
+            // Guardar los pagos
+            const paymentRef = database.ref('payments').push();
+            updates[`payments/${paymentRef.key}`] = {
+                customerId: customerId,
+                totalAmount: amount,
+                method: method,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                processedBy: currentUser.uid,
+                creditPayments: paymentRecords
+            };
+            
+            // Actualizar créditos
+            database.ref().update(updates)
+                .then(() => {
+                    showNotification('💰 Pago registrado exitosamente');
+                    closeModal('paymentModal');
+                    confirmPaymentBtn.disabled = false;
+                    confirmPaymentBtn.textContent = '✅ Confirmar Pago';
+                })
+                .catch(error => {
+                    showNotification(`❌ Error al registrar pago: ${error.message}`, 'error');
+                    confirmPaymentBtn.disabled = false;
+                    confirmPaymentBtn.textContent = '✅ Confirmar Pago';
+                });
         }
 
-        function viewCreditHistory() {
-            showNotification('📋 Historial de créditos disponible');
+        function viewCreditHistory(customerId) {
+            showNotification(`📋 Mostrando historial de créditos para el cliente ${customers[customerId]?.name || 'desconocido'}`);
+            // Aquí podrías implementar un modal más detallado con el historial completo
         }
 
-        // Función de notificaciones
+        // Funciones de ventas
+        function renderRecentSales() {
+            const recentSalesTable = document.getElementById('recentSalesTable');
+            if (!recentSalesTable) return;
+            
+            recentSalesTable.innerHTML = '';
+            
+            // Convertir objeto de ventas a array y ordenar por fecha (más reciente primero)
+            const salesArray = Object.keys(sales).map(saleId => ({
+                id: saleId,
+                ...sales[saleId]
+            })).sort((a, b) => b.timestamp - a.timestamp);
+            
+            // Mostrar solo las últimas 10 ventas
+            const recentSales = salesArray.slice(0, 10);
+            
+            recentSales.forEach(sale => {
+                const row = document.createElement('tr');
+                
+                // Formatear productos
+                let productsText = '';
+                sale.items.forEach((item, index) => {
+                    if (index > 0) productsText += ', ';
+                    productsText += `${item.name} (${item.quantity})`;
+                });
+                
+                row.innerHTML = `
+                    <td>${formatTime(sale.timestamp)}</td>
+                    <td>${sale.vendorName}</td>
+                    <td>${sale.customerName || 'Cliente General'}</td>
+                    <td>${productsText}</td>
+                    <td>$${sale.total.toFixed(2)}</td>
+                    <td>${sale.paymentMethod === 'pendiente' ? 'Crédito' : sale.paymentMethod}</td>
+                `;
+                
+                recentSalesTable.appendChild(row);
+            });
+        }
+
+        function updateDashboardStats() {
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            
+            let totalSales = 0;
+            let cashSales = 0;
+            let transferSales = 0;
+            let creditSales = 0;
+            
+            Object.keys(sales).forEach(saleId => {
+                const sale = sales[saleId];
+                
+                // Solo contar ventas de hoy y que no sean créditos pendientes
+                if (sale.timestamp >= todayStart && sale.status !== 'credito') {
+                    totalSales += sale.total;
+                    
+                    if (sale.paymentMethod === 'efectivo') {
+                        cashSales += sale.total;
+                    } else if (sale.paymentMethod === 'transferencia') {
+                        transferSales += sale.total;
+                    }
+                } else if (sale.status === 'credito') {
+                    creditSales += sale.total;
+                }
+            });
+            
+            document.getElementById('totalSales').textContent = `$${totalSales.toFixed(2)}`;
+            document.getElementById('cashSales').textContent = `$${cashSales.toFixed(2)}`;
+            document.getElementById('transferSales').textContent = `$${transferSales.toFixed(2)}`;
+            document.getElementById('creditSales').textContent = `$${creditSales.toFixed(2)}`;
+        }
+
+        // Funciones de utilidad
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -1717,6 +2121,39 @@
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showRegisterModal() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function loadUserData(userId) {
+            // Aquí podrías cargar datos adicionales del usuario si es necesario
         }
 
         // Cerrar modales al hacer clic fuera
@@ -1728,30 +2165,6 @@
                 }
             });
         }
-        // --- INICIO: EXPOSICIÓN DE FUNCIONES PARA ONCLICK Y NAVEGACIÓN ---
-        window.loginVendor = loginVendor;
-        window.logout = logout;
-        window.showSection = showSection;
-        window.showSubSection = showSubSection;
-        window.addToCart = addToCart;
-        window.changeQuantity = changeQuantity;
-        window.removeFromCart = removeFromCart;
-        window.clearCart = clearCart;
-        window.processSale = processSale;
-        window.showAddProductModal = showAddProductModal;
-        window.closeModal = closeModal;
-        window.addProduct = addProduct;
-        window.restockProduct = restockProduct;
-        window.editProduct = editProduct;
-        window.processPayment = processPayment;
-        window.closePaymentModal = typeof closePaymentModal === 'function' ? closePaymentModal : function() { document.getElementById('paymentModal').style.display = 'none'; };
-        window.confirmPayment = confirmPayment;
-        window.addCreditPayment = addCreditPayment;
-        window.viewCreditHistory = viewCreditHistory;
-        window.deleteProduct = deleteProduct;
-        window.deleteSale = deleteSale;
-        window.deleteCredit = deleteCredit;
-        // --- FIN: EXPOSICIÓN DE FUNCIONES ---
     </script>
 </body>
 </html>
