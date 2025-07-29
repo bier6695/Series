@@ -1635,6 +1635,27 @@
                 }
             });
         }
+        // --- INICIO: EXPOSICIÓN DE FUNCIONES PARA ONCLICK Y NAVEGACIÓN ---
+        window.loginVendor = loginVendor;
+        window.logout = logout;
+        window.showSection = showSection;
+        window.showSubSection = showSubSection;
+        window.addToCart = addToCart;
+        window.changeQuantity = changeQuantity;
+        window.removeFromCart = removeFromCart;
+        window.clearCart = clearCart;
+        window.processSale = processSale;
+        window.showAddProductModal = showAddProductModal;
+        window.closeModal = closeModal;
+        window.addProduct = addProduct;
+        window.restockProduct = restockProduct;
+        window.editProduct = editProduct;
+        window.processPayment = processPayment;
+        window.closePaymentModal = typeof closePaymentModal === 'function' ? closePaymentModal : function() { document.getElementById('paymentModal').style.display = 'none'; };
+        window.confirmPayment = confirmPayment;
+        window.addCreditPayment = addCreditPayment;
+        window.viewCreditHistory = viewCreditHistory;
+        // --- FIN: EXPOSICIÓN DE FUNCIONES ---
     </script>
 </body>
 </html>
