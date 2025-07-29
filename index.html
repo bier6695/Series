@@ -666,10 +666,10 @@
             <div class="header">
                 <div class="logo">🍦 Heladería POS</div>
                 <div class="nav-buttons">
-                    <button class="nav-btn active" onclick="showSubSection('dashboard')">📊 Dashboard</button>
-                    <button class="nav-btn" onclick="showSubSection('pos')">🛒 Punto de Venta</button>
-                    <button class="nav-btn" onclick="showSubSection('inventory')">📦 Inventario</button>
-                    <button class="nav-btn" onclick="showSubSection('credits')">💳 Créditos</button>
+                    <button class="nav-btn active">📊 Dashboard</button>
+                    <button class="nav-btn">🛒 Punto de Venta</button>
+                    <button class="nav-btn">📦 Inventario</button>
+                    <button class="nav-btn">💳 Créditos</button>
                 </div>
                 <div class="user-info">
                     <span class="online-indicator"></span>
@@ -1155,6 +1155,44 @@
             });
         }
 
+        // 1. Eliminar productos del inventario
+        function deleteProduct(id) {
+            if (confirm('¿Seguro que deseas eliminar este producto?')) {
+                remove(ref(db, 'products/' + id)).then(() => {
+                    showNotification('🗑️ Producto eliminado exitosamente');
+                }).catch((error) => {
+                    showNotification('❌ Error al eliminar producto: ' + error.message, 'error');
+                });
+            }
+        }
+        window.deleteProduct = deleteProduct;
+
+        // 2. Eliminar ventas
+        function deleteSale(saleKey) {
+            if (confirm('¿Seguro que deseas eliminar esta venta?')) {
+                remove(ref(db, 'sales/' + saleKey)).then(() => {
+                    showNotification('🗑️ Venta eliminada exitosamente');
+                    // Forzar actualización de la vista
+                    setTimeout(() => renderRecentSales(), 500);
+                }).catch((error) => {
+                    showNotification('❌ Error al eliminar venta: ' + error.message, 'error');
+                });
+            }
+        }
+        window.deleteSale = deleteSale;
+
+        // 3. Eliminar deudas (créditos)
+        function deleteCredit(clientKey) {
+            if (confirm('¿Seguro que deseas eliminar la deuda de este cliente?')) {
+                remove(ref(db, 'credits/' + clientKey)).then(() => {
+                    showNotification('🗑️ Deuda eliminada exitosamente');
+                }).catch((error) => {
+                    showNotification('❌ Error al eliminar deuda: ' + error.message, 'error');
+                });
+            }
+        }
+        window.deleteCredit = deleteCredit;
+
         // Renderizar inventario
         function renderInventory() {
             const tbody = document.querySelector('#inventory tbody');
@@ -1170,12 +1208,14 @@
                     <td><span style="color: ${product.stock <= product.minStock ? '#e74c3c' : '#27ae60'};">${product.stock <= product.minStock ? '⚠️ Stock Bajo' : '✅ Stock OK'}</span></td>
                     <td>
                         <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct('${product.id}')">📦 +Stock</button>
-                        <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct('${product.id}')">✏️ Editar</button>
+                        <button class="btn btn-warning" style="padding: 8px 12px; margin-right: 5px;" onclick="editProduct('${product.id}')">✏️ Editar</button>
+                        <button class="btn btn-danger" style="padding: 8px 12px;" onclick="deleteProduct('${product.id}')">🗑️ Eliminar</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
+        window.renderInventory = renderInventory;
 
         // Renderizar clientes en el select del POS
         function renderClients() {
@@ -1290,11 +1330,13 @@
                         <td>${sale.products.map(p => `${p.name} (${p.quantity})`).join(', ')}</td>
                         <td>$${sale.total.toFixed(2)}</td>
                         <td>${sale.paymentMethod}</td>
+                        <td><button class="btn btn-danger" style="padding: 6px 10px;" onclick="deleteSale('${sale.id}')">🗑️</button></td>
                     `;
                     tbody.appendChild(tr);
                 });
             });
         }
+        window.renderRecentSales = renderRecentSales;
 
         // Renderizar créditos en la tabla de créditos
         function renderCredits() {
@@ -1315,13 +1357,15 @@
                         <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
                         <td>
                             <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
-                            <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory()">📋 Historial</button>
+                            <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="viewCreditHistory()">📋 Historial</button>
+                            <button class="btn btn-danger" style="padding: 8px 12px;" onclick="deleteCredit('${clientKey}')">🗑️ Eliminar</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
             });
         }
+        window.renderCredits = renderCredits;
 
         // Calcular y mostrar totales del dashboard en tiempo real
         function renderDashboardTotals() {
@@ -1359,6 +1403,7 @@
             renderRecentSales();
             renderCredits();
             renderDashboardTotals();
+            
             // Selección de vendedor
             const vendorCards = document.querySelectorAll('.vendor-card');
             const loginBtn = document.getElementById('loginBtn');
@@ -1381,18 +1426,30 @@
                 });
             });
 
-            // Botones de navegación
+            // Botones de navegación corregidos
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.onclick = null; // Eliminar onclick heredado
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-                    const subSection = this.textContent.trim().toLowerCase().includes('dashboard') ? 'dashboard'
-                        : this.textContent.trim().toLowerCase().includes('punto') ? 'pos'
-                        : this.textContent.trim().toLowerCase().includes('inventario') ? 'inventory'
-                        : 'credits';
+                    
+                    let subSection = 'dashboard';
+                    if (this.textContent.includes('Punto de Venta')) subSection = 'pos';
+                    else if (this.textContent.includes('Inventario')) subSection = 'inventory';
+                    else if (this.textContent.includes('Créditos')) subSection = 'credits';
+                    
                     document.querySelectorAll('.subsection').forEach(section => section.classList.remove('active'));
-                    document.getElementById(subSection).classList.add('active');
+                    const targetSection = document.getElementById(subSection);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                        
+                        // Llamar a la función de renderizado adecuada
+                        if (subSection === 'inventory') {
+                            setTimeout(() => renderInventory(), 100);
+                        }
+                        if (subSection === 'credits') {
+                            setTimeout(() => renderCredits(), 100);
+                        }
+                    }
                 });
             });
         });
@@ -1441,6 +1498,14 @@
             if (evt && evt.target) evt.target.classList.add('active');
             document.querySelectorAll('.subsection').forEach(section => section.classList.remove('active'));
             document.getElementById(subSectionId).classList.add('active');
+
+            // Llamar a la función de renderizado adecuada
+            if (subSectionId === 'inventory') {
+                renderInventory();
+            }
+            if (subSectionId === 'credits') {
+                renderCredits();
+            }
         }
         window.showSubSection = showSubSection;
 
@@ -1548,6 +1613,7 @@
             const client = clientSelect ? clientSelect.value : '';
             const now = new Date();
             const sale = {
+                id: push(ref(db, 'sales')).key, // Asignar un ID único
                 time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 vendor: currentUser,
                 client,
@@ -1568,7 +1634,7 @@
                 showNotification('❌ Stock insuficiente para uno o más productos', 'error');
                 return;
             }
-            set(push(ref(db, 'sales')), sale).then(() => {
+            set(ref(db, 'sales/' + sale.id), sale).then(() => {
                 update(ref(db), updates).then(() => {
                     clearCart();
                     showNotification(`✅ Venta procesada: $${total.toFixed(2)} (${selectedPaymentMethod})`);
@@ -1682,6 +1748,9 @@
         window.confirmPayment = confirmPayment;
         window.addCreditPayment = addCreditPayment;
         window.viewCreditHistory = viewCreditHistory;
+        window.deleteProduct = deleteProduct;
+        window.deleteSale = deleteSale;
+        window.deleteCredit = deleteCredit;
         // --- FIN: EXPOSICIÓN DE FUNCIONES ---
     </script>
 </body>
