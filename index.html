@@ -1208,6 +1208,8 @@
             }).then(() => {
                 showNotification('✅ Producto agregado exitosamente');
                 closeModal();
+            }).catch((err) => {
+                showNotification('❌ Error al agregar producto: ' + err.message, 'error');
             });
         }
 
@@ -1378,6 +1380,21 @@
                     selectedPaymentMethod = this.dataset.method || 'efectivo';
                 });
             });
+
+            // Botones de navegación
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.onclick = null; // Eliminar onclick heredado
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const subSection = this.textContent.trim().toLowerCase().includes('dashboard') ? 'dashboard'
+                        : this.textContent.trim().toLowerCase().includes('punto') ? 'pos'
+                        : this.textContent.trim().toLowerCase().includes('inventario') ? 'inventory'
+                        : 'credits';
+                    document.querySelectorAll('.subsection').forEach(section => section.classList.remove('active'));
+                    document.getElementById(subSection).classList.add('active');
+                });
+            });
         });
 
         // Funciones de navegación
@@ -1410,14 +1427,14 @@
         }
 
         // --- CORRECCIÓN DE NAVEGACIÓN ENTRE SECCIONES ---
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const subSection = this.getAttribute('onclick').match(/'([^']+)'/)[1];
-                showSubSection(subSection, e);
-            });
-        });
+        // document.querySelectorAll('.nav-btn').forEach(btn => {
+        //     btn.addEventListener('click', function(e) {
+        //         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        //         this.classList.add('active');
+        //         const subSection = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+        //         showSubSection(subSection, e);
+        //     });
+        // });
 
         function showSubSection(subSectionId, evt) {
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
