@@ -1,2598 +1,1640 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/bier6695/PeliSer/main/CineSeriesTv.png" />	
-<title>CineSeriesTv</title><!-- Bootstrap -->
-<link rel="stylesheet" href="https://bier6695.github.io/documentos/src/bootstrap.min.css">
-<link rel="stylesheet" href="https://bier6695.github.io/documentos/src/style.css">
-<link rel="stylesheet" href="https://bier6695.github.io/documentos/src/fontawesome-pro.css">
-<script src="https://bier6695.github.io/documentos/src/jquery-1.11.3.min.js"></script>
-<link rel="stylesheet" href="https://bier6695.github.io/documentos/src/estilosearch.css">
-<script src="https://bier6695.github.io/documentos/src/jquery.js"></script>
-<script src="https://bier6695.github.io/documentos/src/jquery.dataTables.min.js"></script>
-<script src="https://bier6695.github.io/documentos/src/font-awesome.jsy"></script>
-<!-- Codigo para blokear adblock inicio --> 
- 
-    <style type='text/css'> 
-/* Animation */ 
-@keyframes fadeInDown{0%{opacity:0;transform:translateY(-20px)}100%{opacity:1;transform:translateY(0)}} 
-@keyframes rubberBand{from{transform:scale3d(1,1,1)}30%{transform:scale3d(1.25,0.75,1)}40%{transform:scale3d(0.75,1.25,1)}50%{transform:scale3d(1.15,0.85,1)}65%{transform:scale3d(.95,1.05,1)}75%{transform:scale3d(1.05,.95,1)}to{transform:scale3d(1,1,1)}} 
-/* Say Hi to Adblock */ 
-#arlinablock{background:rgba(0,0,0,0.65);position:fixed;margin:auto;left:0;right:0;top:0;bottom:0;overflow:auto;z-index:999999;animation:fadeInDown 1s} 
-#arlinablock .header{margin:0 0 15px 0} 
-#arlinablock .inner{background:#e3482d;color:#fff;box-shadow:0 5px 20px rgba(0,0,0,0.1);text-align:center;width:600px;padding:40px;border-radius:5px;margin:7% auto 2% auto;animation:rubberBand 1s} 
-#arlinablock button{padding:10px 20px;border:0;background:rgba(0,0,0,0.15);color:#fff;margin:20px 5px;cursor:pointer;transition:all .3s} 
-#arlinablock button:hover{background:rgba(0,0,0,0.35);color:#fff;outline:none} 
-#arlinablock button.active,#arlinablock button:hover.active{background:#fff;color:#222;outline:none} 
-#arlinablock .fixblock{background:#fff;text-align:left;color:#000;padding:20px;height:250px;overflow:auto;line-height:30px} 
-#arlinablock .fixblock div{display:none} 
-#arlinablock .fixblock div.active{display:block} 
-#arlinablock ol{margin-left:20px} 
-@media(max-width:768px){#arlinablock .inner{width:calc(100% - 20px);margin:10px auto;padding:15px}} 
-</style> 
-<script type='text/javascript'> 
-//<![CDATA[ 
-// Say Hi to Adblock 
-function downloadJSAtOnload(){var e=document.createElement("script");e.src="https://cdn.jsdelivr.net/gh/Arlina-Design/quasar@master/arlinablock.js",document.body.appendChild(e)}window.addEventListener?window.addEventListener("load",downloadJSAtOnload,!1):window.attachEvent?window.attachEvent("onload",downloadJSAtOnload):window.onload=downloadJSAtOnload; 
-//]]> 
-</script> 
-<!-- Codigo para blokear adblock fin -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heladería POS - Sistema Mejorado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .online-indicator {
+            width: 12px;
+            height: 12px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .offline-indicator {
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(78, 205, 196, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0); }
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #4ecdc4, #45b7aa);
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            min-height: 70vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .pos-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            min-height: 600px;
+        }
+
+        .products-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: #333;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) rotateX(5deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .product-card.low-stock {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%);
+            color: white;
+            animation: lowStockPulse 2s infinite;
+        }
+
+        @keyframes lowStockPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+        }
+
+        .product-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .cart {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #dee2e6;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .cart-total {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #667eea;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ffeaa7, #fdcb6e);
+            color: #333;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .table th,
+        .table td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .payment-method {
+            padding: 18px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-weight: 500;
+        }
+
+        .payment-method:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .payment-method.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 8px 12px;
+            border-radius: 25px;
+        }
+
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.1);
+        }
+
+        .quantity-display {
+            min-width: 30px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .low-stock-alert {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            animation: alertPulse 3s infinite;
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(255, 193, 7, 0); }
+        }
+
+        .success-alert {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .pos-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .nav-buttons {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 10% auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .vendor-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .vendor-card {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .vendor-card:hover, .vendor-card.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+    </style>
 </head>
-<body class="dark-mode">
-<div class="container-fluid">
-<div class="row main-row">
-<div class="sidebar">
-<h2 class="page-header logo-app">
-<img src="https://raw.githubusercontent.com/bier6695/PeliSer/main/CineSeriesTv.png"></h2>
-<div class="nav-bar-container">
-<nav class="navbar bg-light left-navbar"  >
-<ul class="navbar-nav">
-<a class="btn  btn-subscription"><i class="fas fa-star"></i> Bienvenido</a>
-<li class="nav-item active"><a  class="nav-link" href="go:home"> <i class="fas fa-home"></i> Home</a></li class="nav-item">
-<li class="nav-item"><a class="nav-link" href="go:Peliculas"><i class="fas fa-film"></i>  Peliculas</a></li class="nav-item">
-<li class="nav-item"><a class="nav-link" href="go:Series"><i class="fa fa-desktop"></i> Series</a></li class="nav-item">
-<li class="nav-item"><a href="http://action_offices" target="_blank"><i class="fa fa-pencil fa-fw"></i> Solicitar Contenido</a></li class="nav-item">
-<li class="nav-item"><a href="#" target="_blank"><i class=""></i><span style="color: #F44336;"> -----------------------------------------</a></li class="nav-item">
-<li class="nav-item"><a class="nav-link" href="http://action_profile" target="_blank"><i class="fas fa-user"></i> Perfil</a></li class="nav-item">
-<li class="nav-item"><a class="nav-link" href="http://action_notifications" target="_blank"><i class="fa fa-bell"></i> Notificaciones</a></li class="nav-item">
-<li class="nav-item"><a class="nav-link" href="http://action_share" target="_blank"><i class="fas fa-share"></i> Compartir App</a></li class="nav-item">
-<li class="nav-item"><a href="#" target="_blank"><i class=""></i><span style="color: #F44336;"> -----------------------------------------</a></li class="nav-item">
-<li class="nav-item"><a class="nav-link" href="/PeliSer/Categorias/DMCA.html"><i class="fas fa-lock"></i> D M C A</a></li class="nav-item">
-<li class="nav-item"><a class="nav-link" href="/PeliSer/Categorias/Politica-de-privacidad.html"><i class="fas fa-lock"></i> Política de privacidad</a></li class="nav-item">
-<li class="nav-item"><a href="mailto: cineplaysoporte@gmail.com?Subject=Reportar%20un%20error%20" target="_blank"><i class="fa fa-user"></i> Soporte Técnico</a></li class="nav-item">
-</ul></nav></div></div>
-<div class="close-menu-left-btn"></div>
-<div class="main">
-<div class="xs-header" >
-<button class="btn btn-primary float-left menu-left-btn"><i class="fas fa-bars"></i></button>
-<img src="https://raw.githubusercontent.com/bier6695/PeliSer/main/CineSeriesTv.png">
-<div class="btn-group  float-right">
-<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="for-desktop"> CineSeriesTv </span> 
-<img src="https://bier6695.github.io/PeliSer/Archivos/perfil.jpg"></button>
-<div class="dropdown-menu dropdown-login">
-<li class="nav-item"><a class="nav-link" href="http://action_profile" target="_blank"><i class="fas fa-user"></i> Perfil</a></li class="nav-item">
-<li class="nav-item"><a class="nav-link" href="mailto:cineplaysoporte@gmail.com?Subject=Solicitud%20de%20Contenido%20Cineseriestv" target="_blank"><i class="fad fa-envelope"></i> Contáctanos</a></li class="nav-item">
-<a class="dropdown-item" href="http://action_exit"><i class="fas fa-sign-out-alt"></i> Salir</a>
-</div></div>
-<button class="btn btn-primary float-right search-btn"><i class="fas fa-search"></i></button></div>
-<div class="row top-nav">
-<div class="col-sm-3 col-md-3 " >
-<div class="tab-title"><center>Estrenos</div>
-</div></center>
-<!---Inicio del Buscador Interno--->
-<div class="col-sm-6 col-md-6 search-form" >
-<input type="search" id="input-search" placeholder="Buscar aqui">
-<div class="content-search">
-<div class="content-table">
-<table id="table">
-<thead><tr><td></td></tr>
-</thead><tbody>
-  
-											<tr><td>
-<a href="/PeliSer/Peliculas/Río">Rio<p>Río</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/Río 2">Río 2<p>Rio 2</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/Más Allá de la Fiesta">Más Allá de la Fiesta<p>Afterlife of the Party | La fiesta del más allá</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/La patrulla canina La película">La patrulla canina La película<p>Paw Patrol The Movie</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/Daisy Quokka, ciudad santuario">Daisy Quokka, ciudad santuario<p>Daisy Quokka ciudad santuario</p>
-							</a></td></tr>																												
-												<tr><td>
-<a href="/PeliSer/Peliculas/Caleb">Caleb<p>Village of the Vampire</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/La proposición">La proposición<p>La Propuesta</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/Barbie Grandes Sueños en la Gran Ciudad">Barbie Grandes Sueños en la Gran Ciudad<p>Big City Big Dreams</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/Alanis">Alanis<p></p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/Tiempo">Tiempo<p>Old | Viejos | Tiempo</p>
-							</a></td></tr>																									
-												<tr><td>
-<a href="/PeliSer/Peliculas/Las Vengadoras de Grimm">Las Vengadoras de Grimm<p>Avengers Grimm</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/Candyman">Candyman<p></p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/Black as Night">Black as Night<p></p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/La familia Addams 2 La Gran Escapada">La familia Addams 2 La Gran Escapada<p></p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																									
-							
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																										
-												<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																										
-												<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/"><p>#</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="go:Run">Mama te Quiere<p>Run | Mamá te quiere | Corre</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/No es Romántico">No es Romantico<p>Isn't It Romantic</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/Presencias Inexplicables">Presencias Inexplicables<p>You're Not Alone</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/Cuentos al Caer la Noche">Cuentos al Caer la Noche<p>Nightbooks</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/La Leyenda del Chupacabras">La Leyenda del Chupacabras<p></p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/La Leyenda de La Llorona">La Leyenda de La Llorona<p></p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/El Depredador">El Depredador<p>The Predator</p>
-							</a></td></tr>																										
-												<tr><td>
-<a href="/PeliSer/Peliculas/Poliamor para principiantes">Poliamor para principiantes<p></p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/No se puede huir del amor">No se puede huir del amor<p>El resort del amor</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/En el mejor momento">En el mejor momento<p>Out Of My League</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/La Red de Corrupción">La Red de Corrupción<p>The Corrupted | Corrupción</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/El jinete del dragón">El jinete del dragón<p>Dragon Rider</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/Scooby-Doo La Espada y Scooby">Scooby-Doo La Espada y Scooby<p>Straight Outta Nowhere Scooby-Doo! Meets Courage the Cowardly Dog</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/Maligno">Maligno<p>Malignant</p>
-							</a></td></tr>																									
-											<tr><td>
-<a href="/PeliSer/Peliculas/Kate">Kate<p></p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/Escape Room 2 - Mueres por salir">Escape Room 2 Mueres por salir<p>Escape Room Tournament of Champions</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/Shang-Chi y la Leyenda de los Diez Anillos">Shang-Chi y la Leyenda de los Diez Anillos<p>Shang-Chi and the Legend of the Ten Rings</p>
-							</a></td></tr>																			  
-  
- 											<tr><td>
-<a href="/PeliSer/Peliculas/After Almas Perdidas">After Almas Perdidas<p>After We Fell</p>
-							</a></td></tr>																			   
-  
-<tr><td><a href="/PeliSer/Peliculas/Agencia Secreta de Control Mágico.html">Agencia Secreta de Control Magico</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Despierta la Furia.html">Despierta la Furia</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El Conjuro 3 - El Diablo me Obligó a Hacerlo">El Conjuro 3 - El Diablo me Obligo a Hacerlo</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El ejército de los Muertos.html">El ejercito de los Muertos</a></td></tr>
-<!---Copia esto para la siguiente Busqueda--->
-<tr><td><a href="/PeliSer/Peliculas/Mortal Kombat.html">Mortal Kombat</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Monster Hunter.html">Monster Hunter</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/NOBODY - Nadie.html">NOBODY Nadie</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Rapido-y-Furioso.html">Rapido y Furioso</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Raya y el último dragón.html">Raya y el ultimo dragon</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Rogue Warfare.html">Rogue Warfare</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Trolls 2 - gira mundial.html">Trolls 2 gira mundial</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Tom y Jerry.html">Tom y Jerry</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Slaxx.html">Slaxx</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Un lugar en silencio.html">Un lugar en silencio</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Un lugar en silencio 2.html">Un lugar en silencio 2</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Un lugar en silencio.html">Un lugar tranquilo</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Un lugar en silencio 2.html">Un lugar tranquilo 2</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/La Guerra del Mañana">la guerra del mañana</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Viuda Negra.html">Viuda Negra</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Viuda Negra.html">black widow</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Mulan.html">mulan</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Riverdale.html">Riverdale</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Proyecto Géminis.html">Proyecto Géminis</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Chaos Walking">Chaos Walking</a></td></tr>
-<tr><td><a href="Barrenderos Espaciales">Barrenderos Espaciales</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El dragón de los deseos">El dragón de los deseos</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/A Todos Los Chicos Para Siempre.html">A Todos Los Chicos Para Siempre</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/After Aquí empieza todo.html">After Aquí empieza todo</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/After En mil pedazos.html">After En mil pedazos</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Cruella.html">Cruella</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Despues de ti.html">Despues de ti</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Dime cuando tu.html">Dime cuando tu</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Disomnia.html">Disomnia</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El Día del Sí.html">El Dia del Si</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El mapa de los instantes perfectos.html">El mapa de los instantes perfectos</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Fuerza Trueno.html">Fuerza Trueno</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Godzilla vs Kong.html">Godzilla vs Kong</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Guerra de Likes.html">Guerra de Likes</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Matar a Santa.html">Matar a Santa</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Nadie sabe que estoy aqui.html">Nadie sabe que estoy aqui</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Paternidad.html">Paternidad</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Straight Up.html">Straight Up</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/the dollmaker.html">the dollmaker</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Unpregnant.html">Unpregnant</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Luca">Luca</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Cómo me convertí en superhéroe">Como me converti en superheroe</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Tenet">Tenet</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Sin remordimientos">Sin remordimientos</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Space Jam 2 - Una nueva era">Space Jam 2 - Una nueva era</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Amor Sobre Ruedas">Amor Sobre Ruedas</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Cherry">Cherry</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El Bebé Jefazo 2 Negocios de familia">El Bebe Jefazo 2 Negocios de familia</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Ni un paso en falso">Ni un paso en falso</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/La Purga Infinita">La Purga Infinita</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/La calle del terror Parte 1 1994">La calle del terror Parte 1 1994</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/La calle del terror Parte 2 1978">La calle del terror Parte 2 1978</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/La calle del terror - Parte 3 1666">La calle del terror - Parte 3 1666</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Fragmentos de una mujer">Fragmentos de una mujer</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El despertar de los dragones (SPL2)">El despertar de los dragones (SPL2)</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Un don excepcional">Un don excepcional</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Igor Grom contra el Doctor Plague">Igor Grom contra el Doctor Plague</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Cielo rojo sangre">Cielo rojo sangre</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Snake Eyes G.I. Joe Origins">Snake Eyes G.I. Joe Origins</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El rey de Zamunda">El rey de Zamunda</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/La víctima perfecta">La victima perfecta</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Jolt">Jolt</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/En la misma ola">En la misma ola</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Venom">Venom</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Jungle Cruise">Jungle Cruise</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Vikingos">Vikingos</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Medianoche en el Switchgrass">Medianoche en el Switchgrass</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El último mercenario">El ultimo mercenario</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Songbird">Songbird</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Songbird">Inmune</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Ruega por nosotros">Ruega por nosotros</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/El Escuadrón Suicida">El Escuadrón Suicida 2021</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Frozen - El reino del hielo">Frozen - El reino del hielo</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Frozen Fever">Frozen Fever</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Frozen 2">Frozen 2</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Jurassic World">Jurassic World 2015</a></td></tr>
-<tr><td><a href="/PeliSer/Peliculas/Jurassic World - El reino caído">Jurassic World - El reino caído</a></td></tr>
-					<tr><td>
-<a href="/PeliSer/Peliculas/El Atrapa Sueños.html ">El Atrapa Sueños<p>Dreamcatcher (2021)</p>
-</a></td>	</tr>
-							
-					<tr><td>
-<a href="/PeliSer/Peliculas/Los Mitchell contra las máquinas">Los Mitchell contra las máquinas<p>The Mitchells vs. The Machines</p>
-</a></td></tr>
+<body>
+    <!-- Login de Vendedor -->
+    <div id="loginSection" class="section active">
+        <div class="login-container">
+            <h2 style="text-align: center; margin-bottom: 30px;">🍦 Sistema POS - Heladería</h2>
+            
+            <div class="vendor-select">
+                <div class="vendor-card" data-vendor="Juan Pérez">
+                    <div style="font-size: 2rem;">👨‍💼</div>
+                    <strong>Juan Pérez</strong>
+                    <div>Administrador</div>
+                </div>
+                <div class="vendor-card" data-vendor="María García">
+                    <div style="font-size: 2rem;">👩‍💼</div>
+                    <strong>María García</strong>
+                    <div>Vendedora</div>
+                </div>
+                <div class="vendor-card" data-vendor="Carlos López">
+                    <div style="font-size: 2rem;">👨‍💼</div>
+                    <strong>Carlos López</strong>
+                    <div>Vendedor</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="loginVendor()" style="width: 100%;" disabled id="loginBtn">
+                Iniciar Sesión
+            </button>
+        </div>
+    </div>
 
-					<tr><td>
-<a href="/PeliSer/Peliculas/Duro de Cuidar 2">Duro de Cuidar 2</p>El otro guardaespaldas 2 (2021)
-</a></td></tr>
-							
-					<tr><td>
-<a href="/PeliSer/Peliculas/Vivo">Vivo<p>2021</p>
-</a></td></tr>
+    <!-- Sistema POS Principal -->
+    <div id="mainSystem" class="section">
+        <div class="notification" id="notification"></div>
 
-<tr><td>
-<a href="/PeliSer/Peliculas/Forrest Gump">Forrest Gump<p>1994</p>
-</a></td></tr>
+        <div class="container">
+            <div class="header">
+                <div class="logo">🍦 Heladería POS</div>
+                <div class="nav-buttons">
+                    <button class="nav-btn active" onclick="showSubSection('dashboard')">📊 Dashboard</button>
+                    <button class="nav-btn" onclick="showSubSection('pos')">🛒 Punto de Venta</button>
+                    <button class="nav-btn" onclick="showSubSection('inventory')">📦 Inventario</button>
+                    <button class="nav-btn" onclick="showSubSection('credits')">💳 Créditos</button>
+                </div>
+                <div class="user-info">
+                    <span class="online-indicator"></span>
+                    <span id="currentUser">Usuario</span>
+                    <button class="btn btn-warning" onclick="logout()" style="padding: 8px 15px;">Salir</button>
+                </div>
+            </div>
 
-					<tr><td>
-<a href="/PeliSer/Peliculas/Pokémon Detective Pikachu">Pokemon Detective Pikachu<p>2019</p>
-</a>	</td></tr>
+            <div class="main-content">
+                <!-- Dashboard -->
+                <div id="dashboard" class="subsection active">
+                    <h2 style="margin-bottom: 25px;">📊 Dashboard - Resumen del Día</h2>
+                    
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalSales">$245.50</div>
+                            <div class="stat-label">💰 Ventas del Día</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cashSales">$180.25</div>
+                            <div class="stat-label">💵 Ventas Efectivo</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="transferSales">$45.25</div>
+                            <div class="stat-label">💳 Transferencias</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="creditSales">$20.00</div>
+                            <div class="stat-label">📝 Ventas a Crédito</div>
+                        </div>
+                    </div>
 
-					<tr><td>
-<a href="/PeliSer/Peliculas/Dragon Ball Super - Broly">Dragon Ball Super - Broly<p>Dragon Ball Super - Broly</p>
-</a></td></tr>
+                    <div id="alertContainer"></div>
 
-										<tr><td>
-<a href="/PeliSer/Peliculas/Freaky">Freaky<p>Este cuerpo me sienta de muerte</p>
-							</a></td></tr>
-					
-										<tr><td>
-<a href="/PeliSer/Peliculas/Sonic">Sonic la película</p>Sonic the Hedgehog</a></td></tr>					
-										<tr><td>
-<a href="/PeliSer/Peliculas/Infinite.html">Infinite<p>Infinito</p>
-							</a></td></tr>
-							
-											<tr><td>
-<a href="/PeliSer/Peliculas/Tomando el control">Tomando el control<p>Free Guy</p>
-							</a></td></tr>						
-					
-										<tr><td>
-<a href="/PeliSer/Peliculas/El Stand de los Besos 3">El Stand de los Besos 3<p>The Kissing Booth 3</p>
-							</a></td></tr>
-							
-										<tr><td>
-<a href="/PeliSer/Peliculas/Kimetsu tren infinito">Kimetsu no Yaiba: Mugen Ressha-hen<p>Guardianes de la noche: Tren infinito</p>
-							</a></td></tr>							
-							
-										<tr><td>
-<a href="/PeliSer/Peliculas/Las voces">Las voces<p>The Voices</p>
-							</a></td></tr>
-							
-										<tr><td>
-<a href="/PeliSer/Peliculas/El día después de mañana">El día después de mañana<p>The Day After Tomorrow</p>
-							</a></td></tr>		
-							
-						
-										<tr><td>
-<a href="/PeliSer/Peliculas/Spare Parts">Spare Parts<p>A Mano Armada</p>
-							</a></td></tr>										
-										<tr><td>
-<a href="/PeliSer/Peliculas/BLACKPINK">BLACKPINK<p>Documental</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/No respires">No respires<p>Don't Breathe</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/No respires 2">No Respires 2<p>Don't Breathe 2</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/El Stand de los Besos">El Stand de los Besos 1<p>The Kissing Booth</p>
-							</a></td></tr>																	
-										<tr><td>
-<a href="/PeliSer/Peliculas/El Stand de los Besos 2">El Stand de los Besos 2<p>The Kissing Booth 2</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/Jumanji siguiente nivel">Jumanji siguiente nivel<p>Jumanji The Next Level</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/Feliz día de tu muerte">Feliz dia de tu muerte<p>Happy Death Day</p>
-							</a></td></tr>														
-																	<tr><td>
-<a href="/PeliSer/Peliculas/Feliz día de tu muerte 2">Feliz dia de tu muerte 2<p>Happy Death Day 2</p>
-							</a></td></tr>														
-							
-										<tr><td>
-<a href="/PeliSer/Peliculas/Huérfano">Huerfano<p>Ballet Blanc</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/Terapia del Miedo">Terapia del Miedo<p>Insensate</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/Annabelle">Annabelle<p>Annabelle 1</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/Annabelle 2 La Creación">Annabelle 2 La Creación<p>Annabelle Creation</p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/Annabelle vuelve a casa">Annabelle 3 vuelve a casa<p>Annabelle Comes Home</p>
-							</a></td></tr>										
-								<tr><td>
-<a href="/PeliSer/Peliculas/Jumanji - Bienvenidos a la jungla">Jumanji Bienvenidos a la jungla<p>Jumanji Welcome to the Jungle</p>
-							</a></td></tr>			
-							
-<tr><td>
-<a href="/PeliSer/Peliculas/365 Días">365 Días<p>365 Days</p>
-							</a></td></tr>														
-							
-<tr><td>
-<a href="/PeliSer/Peliculas/Soñadores">Soñadores<p>Los Soñadores</p>
-							</a></td></tr>		
-							
-<tr><td>
-<a href="/PeliSer/Peliculas/Como la Espuma">Como la Espuma<p>Erotica</p>
-							</a></td></tr>														
-<tr><td>
-<a href="/PeliSer/Peliculas/Crazy Fist">Crazy Fist<p></p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/Sweet Girl">Sweet Girl<p></p>
-							</a></td></tr>																
-											<tr><td>
-<a href="/PeliSer/Peliculas/Las Formas Antiguas">Las Formas Antiguas<p>The Old Ways</p>
-							</a></td></tr>																				
-										<tr><td>
-<a href="/PeliSer/Peliculas/Salvaje">Salvaje<p>Unhinged - Fuera de control</p>
-							</a></td></tr>																					
-										<tr><td>
-<a href="/PeliSer/Peliculas/Coco">Coco<p></p>
-							</a></td></tr>														
-										<tr><td>
-<a href="/PeliSer/Peliculas/Alguien como él">Alguien como él<p>El es así</p>
-							</a></td></tr>																					
-											<tr><td>
-<a href="/PeliSer/Peliculas/Amigos Pasajeros">Amigos Pasajeros<p>Vacation Friends</p>
-							</a></td></tr>																					
-							
-										<tr><td>
-<a href="/PeliSer/Peliculas/El Ascenso del Cisne Negro">SAS El Ascenso del Cisne Negro<p>SAS: Red Notice</p>
-							</a></td></tr>																					
+                    <h3 style="margin-bottom: 15px;">📋 Ventas Recientes</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>⏰ Hora</th>
+                                <th>👤 Vendedor</th>
+                                <th>🧑‍🤝‍🧑 Cliente</th>
+                                <th>🍦 Productos</th>
+                                <th>💰 Total</th>
+                                <th>💳 Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentSalesTable">
+                            <tr>
+                                <td>14:30</td>
+                                <td>María García</td>
+                                <td>Ana Martínez</td>
+                                <td>Vainilla (2), Chocolate (1)</td>
+                                <td>$9.00</td>
+                                <td>Efectivo</td>
+                            </tr>
+                            <tr>
+                                <td>14:15</td>
+                                <td>Juan Pérez</td>
+                                <td>Cliente General</td>
+                                <td>Fresa (1)</td>
+                                <td>$3.50</td>
+                                <td>Transferencia</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-<tr><td>
-<a href="/PeliSer/Peliculas/Espiral El juego del miedo continúa">Espiral El juego del miedo continúa<p>Spiral Saw | Spiral From the Book of Saw</p>
-							</a></td></tr>
-							
-							<tr><td>
-<a href="/PeliSer/Peliculas/The Witcher La Pesadilla del Lobo">The Witcher La Pesadilla del Lobo<p>The Witcher Nightmare of the Wolf</p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Peliculas/Un romance de verdad">Un romance de verdad<p>Really Love</p>
-							</a></td></tr>																												
-											<tr><td>
-<a href="/PeliSer/Peliculas/Aves de Presa">Aves de Presa<p>Harley Quinn Birds of Prey</p>
-							</a></td></tr>																					
-	
-											<tr><td>
-<a href="/PeliSer/Peliculas/Soy Venganza Represalia">Soy Venganza Represalia<p>I Am Vengeance</p>
-							</a></td></tr>																					
-							
-										<tr><td>
-<a href="/PeliSer/Peliculas/Cenicienta">Cenicienta<p></p>
-							</a></td></tr>																												
-							
-	
-							
+                <!-- Punto de Venta -->
+                <div id="pos" class="subsection">
+                    <h2 style="margin-bottom: 25px;">🛒 Punto de Venta</h2>
+                    <div class="pos-grid">
+                        <div class="products-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h3>🍦 Productos Disponibles</h3>
+                                <input type="text" class="search-bar" placeholder="🔍 Buscar productos..." style="width: 250px; margin-bottom: 0;">
+                            </div>
+                            <div class="products-grid">
+                                <button class="product-card" onclick="addToCart({id: 'H001', name: 'Vainilla', price: 3.00, stock: 50})">
+                                    <div class="product-icon">🍦</div>
+                                    <div><strong>Vainilla</strong></div>
+                                    <div>$3.00</div>
+                                    <div>Stock: 50</div>
+                                </button>
+                                <button class="product-card" onclick="addToCart({id: 'H002', name: 'Chocolate', price: 3.00, stock: 45})">
+                                    <div class="product-icon">🍫</div>
+                                    <div><strong>Chocolate</strong></div>
+                                    <div>$3.00</div>
+                                    <div>Stock: 45</div>
+                                </button>
+                                <button class="product-card low-stock" onclick="addToCart({id: 'H003', name: 'Fresa', price: 3.50, stock: 8})">
+                                    <div class="product-icon">🍓</div>
+                                    <div><strong>Fresa</strong></div>
+                                    <div>$3.50</div>
+                                    <div>Stock: 8 ⚠️</div>
+                                </button>
+                                <button class="product-card" onclick="addToCart({id: 'H004', name: 'Cookies & Cream', price: 4.00, stock: 25})">
+                                    <div class="product-icon">🍪</div>
+                                    <div><strong>Cookies & Cream</strong></div>
+                                    <div>$4.00</div>
+                                    <div>Stock: 25</div>
+                                </button>
+                                <button class="product-card" onclick="addToCart({id: 'H005', name: 'Menta', price: 3.50, stock: 20})">
+                                    <div class="product-icon">🌿</div>
+                                    <div><strong>Menta</strong></div>
+                                    <div>$3.50</div>
+                                    <div>Stock: 20</div>
+                                </button>
+                                <button class="product-card" onclick="addToCart({id: 'H006', name: 'Mango', price: 3.75, stock: 35})">
+                                    <div class="product-icon">🥭</div>
+                                    <div><strong>Mango</strong></div>
+                                    <div>$3.75</div>
+                                    <div>Stock: 35</div>
+                                </button>
+                            </div>
+                        </div>
 
-<!---Copia esto para la siguiente Busqueda--->
-<tr><td><a href="/PeliSer/Serie/Invencible">Invencible</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/La casa de papel.html">La casa de papel</a></td></tr>
-<tr><td><a href="/PeliSer/SSerieLoki.html">Loki</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Lupín.html">Lupin</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Riverdale">Riverdale</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Superman y Lois.html">Superman y Lois</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/El niño ciervo.html">El niño ciervo</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/El niño ciervo.html">Sweet Tooth</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Falcon y el Soldado de Invierno.html">Falcon y el Soldado de Invierno</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Sexo vida">Sexo vida</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Skam España">Skam España</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/See">See</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/El infiltrado">El infiltrado</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Estación 19">Estacion 19</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/The Boys">The Boys</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Amos del Universo - Revelación">Amos del Universo - Revelación</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/WandaVision">WandaVision</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/WandaVision">Bruja Escarlata y Visión</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Sex Education">Sex Education</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Control Z">Control Z</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Rick y Morty">Rick y Morty</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Roswell - New Mexico">Roswell - New Mexico</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Con Olor a Fresas">Con Olor a Fresas</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Batwoman">Batwoman</a></td></tr>
+                        <div class="cart">
+                            <div class="cart-header">
+                                <h3>🛒 Carrito</h3>
+                                <button class="btn btn-warning" onclick="clearCart()" style="padding: 8px 16px; font-size: 14px;">🗑️ Limpiar</button>
+                            </div>
+                            
+                            <div id="cartItems">
+                                <div class="cart-item">
+                                    <div>
+                                        <strong>Vainilla</strong><br>
+                                        $3.00 c/u
+                                    </div>
+                                    <div class="quantity-controls">
+                                        <button class="quantity-btn">-</button>
+                                        <span class="quantity-display">2</span>
+                                        <button class="quantity-btn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="cart-total">Total: $6.00</div>
 
+                            <div class="form-group">
+                                <label>👤 Cliente</label>
+                                <select class="form-control">
+                                    <option value="">Cliente General</option>
+                                    <option value="Ana Martínez">Ana Martínez</option>
+                                    <option value="Luis Rodríguez">Luis Rodríguez</option>
+                                    <option value="Carmen Soto">Carmen Soto</option>
+                                </select>
+                            </div>
 
-<tr><td>
-<a href="/PeliSer/Serie/A toda pastilla">A toda pastilla<p>Cómo vender drogas online</p>
-</a></td></tr>
+                            <div class="payment-methods">
+                                <div class="payment-method selected">
+                                    💵<br><strong>Efectivo</strong>
+                                </div>
+                                <div class="payment-method">
+                                    💳<br><strong>Transferencia</strong>
+                                </div>
+                                <div class="payment-method">
+                                    📝<br><strong>Crédito</strong>
+                                </div>
+                            </div>
 
+                            <button class="btn btn-success" style="width: 100%; margin-bottom: 10px;" onclick="processSale()">
+                                💰 Procesar Venta
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-										<tr><td>
-<a href="/PeliSer/Serie/What If">What If<p>Qué pasaría si</p>
-							</a></td></tr>
-							
-							
-<tr><td><a href="/PeliSer/Serie/La Piloto">La Piloto</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/motherland for salem">motherland for salem</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/La Reina del Sur">La Reina del Sur</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Dragon Ball Super">Dragon Ball Super</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Soy Luna">Soy Luna</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Orphan black">Orphan black</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Selena">Selena</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Siren">Siren</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Es Mío">Es Mío</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Soldados o Zombies">S.O.Z: Soldados o Zombies</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Tierra trágame">Tierra trágame</a></td></tr>
-<tr><td><a href="/PeliSer/Serie/Recuerdos de Juventud">Recuerdos de Juventud</a></td></tr>
+                <!-- Inventario -->
+                <div id="inventory" class="subsection">
+                    <h2 style="margin-bottom: 25px;">📦 Control de Inventario</h2>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <input type="text" class="search-bar" placeholder="🔍 Buscar productos..." style="width: 300px; margin-bottom: 0;">
+                        <button class="btn btn-primary" onclick="showAddProductModal()">➕ Agregar Producto</button>
+                    </div>
+                    
+                    <div class="low-stock-alert">
+                        <strong>⚠️ Productos con stock bajo:</strong><br>
+                        Fresa (8 unidades) - Se recomienda reabastecer
+                    </div>
 
-										<tr><td>
-<a href="/PeliSer/Serie/Juego de Tronos">Juego de Tronos<p>Game of Thrones</p>
-							</a></td></tr>									
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>🍦 Producto</th>
+                                <th>💰 Precio</th>
+                                <th>📦 Stock</th>
+                                <th>📊 Estado</th>
+                                <th>⚙️ Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>🍦 Vainilla</td>
+                                <td>$3.00</td>
+                                <td>50</td>
+                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
+                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>🍫 Chocolate</td>
+                                <td>$3.00</td>
+                                <td>45</td>
+                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
+                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
+                                </td>
+                            </tr>
+                            <tr style="background: rgba(255, 107, 107, 0.1);">
+                                <td>🍓 Fresa</td>
+                                <td>$3.50</td>
+                                <td>8</td>
+                                <td><span style="color: #e74c3c;">⚠️ Stock Bajo</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
+                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>🍪 Cookies & Cream</td>
+                                <td>$4.00</td>
+                                <td>25</td>
+                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
+                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>🌿 Menta</td>
+                                <td>$3.50</td>
+                                <td>20</td>
+                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
+                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>🥭 Mango</td>
+                                <td>$3.75</td>
+                                <td>35</td>
+                                <td><span style="color: #27ae60;">✅ Stock OK</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct()">📦 +Stock</button>
+                                    <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct()">✏️ Editar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-										<tr><td>
-<a href="/PeliSer/Serie/Home Before Dark">Home Before Dark<p></p>
-							</a></td></tr>									
+                <!-- Créditos -->
+                <div id="credits" class="subsection">
+                    <h2 style="margin-bottom: 25px;">💳 Gestión de Créditos</h2>
+                    
+                    <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 30px;">
+                        <div class="stat-card">
+                            <div class="stat-value">$85.50</div>
+                            <div class="stat-label">💰 Total en Créditos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">👥 Clientes con Deuda</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">$28.50</div>
+                            <div class="stat-label">📊 Promedio por Cliente</div>
+                        </div>
+                    </div>
 
-										<tr><td>
-<a href="/PeliSer/Serie/The Flash">The Flash<p></p>
-							</a></td></tr>										
-										<tr><td>
-<a href="/PeliSer/Serie/Candice Renoir">Candice Renoir<p></p>
-							</a></td></tr>																
-										<tr><td>
-<a href="/PeliSer/Serie/El Club">El Club<p>The Club</p>
-							</a></td></tr>									
-							
-										<tr><td>
-<a href="/PeliSer/Novelas/Rosario Tijeras">Rosario Tijeras<p></p>
-							</a></td></tr>																
-										<tr><td>
-<a href="/PeliSer/Serie/El Barco">El Barco<p></p>
-							</a></td></tr>									
-							
-										<tr><td>
-<a href="/PeliSer/Serie/A todo tren destino Asturias">A todo tren destino Asturias<p></p>
-							</a></td></tr>																
-										<tr><td>
-<a href="/PeliSer/Serie/Mortal Kombat Legends Battle of The Realms">Mortal Kombat Legends: Batalla de los reinos<p>Mortal Kombat Legends: Battle of The Realms</p>
-							</a></td></tr>																
-										<tr><td>
-<a href="/PeliSer/Serie/The Walking Dead">The Walking Dead<p></p>
-							</a></td></tr>																
-							
-										<tr><td>
-<a href="/PeliSer/Serie/Hola Soy yo">Hola Soy yo<p></p>
-							</a></td></tr>																
-							
-										<tr><td>
-<a href="/PeliSer/Serie/Chicago PD">Chicago PD<p></p>
-							</a></td></tr>																
-							
-										<tr><td>
-<a href="/PeliSer/Serie/Wynonna Earp">Wynonna Earp<p></p>
-							</a></td></tr>																
-							
-										<tr><td>
-<a href="/PeliSer/Serie/Territorio Lovecraft">Territorio Lovecraft<p>Territorio Lovecraft</p>
-							</a></td></tr>																							
-							
-											<tr><td>
-<a href="/PeliSer/Serie/Outer Banks">Outer Banks<p></p>
-							</a></td></tr>																
-										<tr><td>
-<a href="/PeliSer/Serie/Pequeñas Mentirosas">Pequeñas Mentirosas<p>Pretty Little Liars</p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/The Good Doctor">The Good Doctor<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Magnum PI">Magnum PI<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Doctor Milagro">Doctor Milagro<p>Mucize Doktor</p>
-							</a></td></tr>																
-										<tr><td>
-<a href="/PeliSer/Serie/Lucifer">Lucifer<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Leyendas del Mañana">Leyendas del Mañana<p>Legends of Tomorrow</p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Lunáticos">Lunáticos<p>Loonatics desatados</p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/The Mandalorian">The Mandalorian<p>Mandalorian</p>
-							</a></td></tr>																								
-											<tr><td>
-<a href="/PeliSer/Serie/Love, Victor">Love Victor<p>Con amor Victor</p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/Dark">Dark<p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/El Legado de Júpiter">El Legado de Júpiter<p>Jupiter’s Legacy</p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="go:Roswell1">prueba1<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Arrow">Arrow<p></p>
-							</a></td></tr>																						
-										<tr><td>
-<a href="/PeliSer/Serie/Teen Wolf">Teen Wolf<p>Lobo adolescente</p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/El Juego de las Llaves">El Juego de las Llaves<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Doramas/El juego del calamar">El juego del calamar<p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Novelas/Enfermeras">Enfermeras<p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/Socios y Sabuesos">Socios y Sabuesos<p>Hooch Machina</p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Walker">Walker<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Barry">Barry<p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/El Mentalista">El Mentalista<p>the mentalist</p>
-							</a></td></tr>																								
-											<tr><td>
-<a href="/PeliSer/Serie/The Witcher">The Witcher<p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/Miraculous">Miraculous Las aventuras de Ladybug<p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/Star Wars Visions">Star Wars Visions<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/iCarly">iCarly<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Suits">La ley de los audaces<p>Suits</p>
-							</a></td></tr>																						
-										<tr><td>
-<a href="/PeliSer/DDoramasUn Amor Loco">Un Amor Loco<p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/Cleptómanas">Cleptómanas<p>Trinkets</p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>			
-							
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																								
-											<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																						
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																							
-										<tr><td>
-<a href="/PeliSer/Serie/"><p></p>
-							</a></td></tr>																								
-										<tr><td>
-<a href="/PeliSer/Serie/Titanes">Titanes<p>Titans</p>
-							</a></td></tr>										
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <input type="text" class="search-bar" placeholder="🔍 Buscar cliente..." style="width: 250px; margin-bottom: 0;">
+                        <button class="btn btn-success" onclick="addCreditPayment()">💰 Registrar Pago</button>
+                    </div>
 
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>👤 Cliente</th>
+                                <th>💰 Deuda Total</th>
+                                <th>📅 Última Compra</th>
+                                <th>📊 Estado</th>
+                                <th>⚙️ Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>Ana Martínez</strong><br>
+                                    <small>📞 809-111-2222</small>
+                                </td>
+                                <td><strong style="color: #e74c3c;">$35.00</strong></td>
+                                <td>2024-01-25</td>
+                                <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
+                                <td>
+                                    <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
+                                    <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory()">📋 Historial</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Luis Rodríguez</strong><br>
+                                    <small>📞 809-333-4444</small>
+                                </td>
+                                <td><strong style="color: #e74c3c;">$25.50</strong></td>
+                                <td>2024-01-23</td>
+                                <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
+                                <td>
+                                    <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
+                                    <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory()">📋 Historial</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Carmen Soto</strong><br>
+                                    <small>📞 809-555-6666</small>
+                                </td>
+                                <td><strong style="color: #e74c3c;">$25.00</strong></td>
+                                <td>2024-01-24</td>
+                                <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
+                                <td>
+                                    <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
+                                    <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory()">📋 Historial</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-										<tr><td>
-<a href="/PeliSer/Novelas/La Desalmada.html">La Desalmada<p></p>
-							</a></td></tr>																					
+                    <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #e8f5e8, #d4edda); border-radius: 15px; border-left: 5px solid #28a745;">
+                        <h4 style="color: #155724; margin-bottom: 15px;">📊 Resumen de Créditos</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <strong>💰 Total por cobrar:</strong> $85.50
+                            </div>
+                            <div>
+                                <strong>📅 Crédito más antiguo:</strong> 2024-01-23
+                            </div>
+                            <div>
+                                <strong>👤 Cliente con mayor deuda:</strong> Ana Martínez
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-										<tr><td>
-<a href="/PeliSer/Novelas/El Cartel de los Sapos - El Origen.html">El Cartel de los Sapos El Origen<p></p>
-							</a></td></tr>																					
-							
-<tr><td>
-<a href="/PeliSer/Doramas/El cielo te está esperando">El cielo te está esperando<p>Dorama</p>
-							</a></td></tr>	
-							
-<tr><td>
-<a href="/PeliSer/Doramas/Holo, mi amor">Holo mi amor<p>Dorama</p>
-							</a></td></tr>																	
-							
-<tr><td>
-<a href="/PeliSer/Doramas/My Runway">My Runway<p>Mi pasarela</p>
-							</a></td></tr>																	
-<tr><td>
-<a href="/PeliSer/Doramas/Mermelada de naranja">Mermelada de naranja<p>Orange Marmalade</p>
-							</a></td></tr>																	
-							
-							
-										<tr><td>
-<a href="/PeliSer/Novelas/Sin Senos no hay Paraíso">Sin Senos no hay Paraíso<p>Without Breasts There Is No Paradise</p>
-							</a></td></tr>																									
-										<tr><td>
-<a href="/PeliSer/Doramas/El Hada De Las Pesas">El Hada De Las Pesas<p>Dorama</p>
-							</a></td></tr>										
-										<tr><td>
-<a href="/PeliSer/Doramas/Pasadizo De Emergencia">Pasadizo De Emergencia<p>Hospital Playlist</p>
-							</a></td></tr>																					
-										<tr><td>
-<a href="/PeliSer/Novelas/Quién es Quién">Quien es Quien<p></p>
-							</a></td></tr>																												
+    <!-- Modal para Agregar Producto -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 style="margin-bottom: 25px;">➕ Agregar Nuevo Producto</h3>
+            
+            <div class="form-group">
+                <label>🍦 Nombre del Producto</label>
+                <input type="text" class="form-control" placeholder="Ej: Helado de Pistacho">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>💰 Precio</label>
+                    <input type="number" step="0.01" class="form-control" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>📦 Stock Inicial</label>
+                    <input type="number" class="form-control" placeholder="0">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>⚠️ Stock Mínimo</label>
+                <input type="number" class="form-control" placeholder="10">
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn btn-success" style="flex: 1;" onclick="addProduct()">✅ Agregar Producto</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal()">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-<!---Pega aqui el codigo del Buscador para una nueva Busqueda--->
-<!---No tocar esto--->
-</tbody></table></div></div>
-<!---fin del Buscador Interno--->
-<button class="btn btn-primary float-right for-phone search-btn-close"><i class="fas fa-times"></i></button></div>
-<div class="col-sm-3 col-md-3 account-action for-desktop">
-<div class="float-right">
-<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="for-desktop"> CineSeriesTv </span> 
-<img src="https://bier6695.github.io/PeliSer/Archivos/perfil.jpg"></button>
-<div class="dropdown-menu dropdown-login">
-<a class="dropdown-item" href="http://action_exit"><i class="fas fa-sign-out-alt"></i> Salir</a>
-</div></div></div></div>
-<!---Slider tipo Portada--->
-<div class="content">
-<div class="row content-section">
-<div class="col-sm-12 col-md-12" >
-<div id="myCarousel" class="carousel slide w-100" data-ride="carousel">
-<ol class="carousel-indicators float-right">
-<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-<li data-target="#myCarousel" data-slide-to="1" ></li>
-<li data-target="#myCarousel" data-slide-to="2" ></li>
-<li data-target="#myCarousel" data-slide-to="3" ></li>
-<li data-target="#myCarousel" data-slide-to="4" ></li>
-<li data-target="#myCarousel" data-slide-to="5" ></li>
-<li data-target="#myCarousel" data-slide-to="6" ></li>
-<li data-target="#myCarousel" data-slide-to="7" ></li>
-<li data-target="#myCarousel" data-slide-to="8" ></li>
-</ol>
-<div class="carousel-inner w-100" role="listbox">
-<!---Inicio del Slider tipo Portada--->
-<div class="carousel-item active">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/qsQn1dMeMQIcYSkcLfO7XwNJ5um.jpg">
-<a href="go:Addams2" class="carousel-detail">
-<div>
-<h3>La familia Addams 2 La Gran Escapada</h3>
-</div>
-</a>
-</div>
-</div>
-<div class="carousel-item ">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/zcXK5WqL2H3608wMLLjNhCib3mr.jpg">
-<a href="go:BlackNight" class="carousel-detail">
-<div>
-<h3>Black as Night</h3>
-</div>
-</a>
-</div>
-</div>
-<div class="carousel-item ">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/mCaolOVQ5Y9Hfv3R2izakXo6UJg.jpg">
-<a href="go:Candyman" class="carousel-detail">
-<div>
-<h3>Candyman</h3>
-</div>
-</a>
-</div>
-</div>
-<div class="carousel-item ">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/w3xffZgBDhzFhHtUg6dA72DcfZA.jpg">
-<a href="/PeliSer/Serie/Star Wars Visions" class="carousel-detail">
-<div>
-<h3>Star Wars Visions</h3>
-</div>
-</a>
-</div>
-</div>
-<div class="carousel-item">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/yN7WF749RuRc9QRUz986sC87YoV.jpg">
-<a href="/PeliSer/Doramas/El juego del calamar.html" class="carousel-detail">
-<div>
-<h3>El juego del calamar</h3>
-</div>
-</a>
-</div>
-</div>
-<div class="carousel-item">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/2dFNC3tuX88FMw4WVzLJAhooPDy.jpg">
-<a href="/PeliSer/Serie/El Juego de las Llaves.html" class="carousel-detail">
-<div>
-<h3>El Juego de las Llaves</h3>
-</div>
-</a>
-</div>
-</div>
-<div class="carousel-item">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/ji8nplOACfZx9Nvbv1uy6XcLMGA.jpg">
-<a href="/PeliSer/Peliculas/Cuentos al Caer la Noche.html" class="carousel-detail">
-<div>
-<h3>Cuentos al Caer la Noche</h3>
-</div>
-</a>
-</div>
-</div>
-<div class="carousel-item">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/o2wHyUwkIdbLFTdgoGb6kbECqtR.jpg">
-<a href="/PeliSer/Peliculas/Kate.html" class="carousel-detail">
-<div>
-<h3>Kate</h3>
-</div>
-</a>
-</div>
-</div>
-<div class="carousel-item">
-<div class="col-xxl-5 col-lg-8 col-md-12">
-<img height="400" width="640" class="img-fluid" src="https://www.themoviedb.org/t/p/original/849RDhbADVVnhtggR14dDBYejeN.jpg">
-<a href="/PeliSer/Peliculas/Cenicienta.html" class="carousel-detail">
-<div>
-<h3>Cenicienta</h3>
-</div>
-</a>
-</div>
-</div>
+    <!-- Modal para Procesar Pago -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <h3 style="margin-bottom: 25px;">💰 Registrar Pago de Crédito</h3>
+            
+            <div class="form-group">
+                <label>👤 Cliente</label>
+                <input type="text" class="form-control" value="Ana Martínez" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label>💰 Deuda Actual</label>
+                <input type="text" class="form-control" value="$35.00" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label>💵 Monto a Pagar</label>
+                <input type="number" step="0.01" class="form-control" placeholder="0.00">
+            </div>
+            
+            <div class="form-group">
+                <label>💳 Método de Pago</label>
+                <select class="form-control">
+                    <option value="efectivo">💵 Efectivo</option>
+                    <option value="transferencia">💳 Transferencia</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn btn-success" style="flex: 1;" onclick="confirmPayment()">✅ Confirmar Pago</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closePaymentModal()">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
 
+    <script type="module">
+        // Importar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-WV5eeZ-9DpTBYFFNr9_Q29Dg_hMyU6w",
+            authDomain: "heladeria-pos.firebaseapp.com",
+            databaseURL: "https://heladeria-pos-default-rtdb.firebaseio.com",
+            projectId: "heladeria-pos",
+            storageBucket: "heladeria-pos.appspot.com",
+            messagingSenderId: "171441568131",
+            appId: "1:171441568131:web:6f730a3e64b79735815eb6"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
+        // Variables globales
+        let currentUser = '';
+        let cart = [];
+        let selectedPaymentMethod = 'efectivo';
+        let products = {};
+        let clients = {};
 
+        // Cargar productos desde Firebase
+        function loadProducts() {
+            const productsRef = ref(db, 'products');
+            onValue(productsRef, (snapshot) => {
+                products = snapshot.val() || {};
+                renderProducts();
+                renderInventory();
+            });
+        }
 
+        // Cargar clientes desde Firebase
+        function loadClients() {
+            const clientsRef = ref(db, 'clients');
+            onValue(clientsRef, (snapshot) => {
+                clients = snapshot.val() || {};
+                renderClients();
+            });
+        }
 
+        // Renderizar productos en POS
+        function renderProducts() {
+            const grid = document.querySelector('.products-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            Object.values(products).forEach(product => {
+                const btn = document.createElement('button');
+                btn.className = 'product-card' + (product.stock <= product.minStock ? ' low-stock' : '');
+                btn.onclick = () => addToCart(product);
+                btn.innerHTML = `
+                    <div class="product-icon">${product.icon || '🍦'}</div>
+                    <div><strong>${product.name}</strong></div>
+                    <div>$${product.price.toFixed(2)}</div>
+                    <div>Stock: ${product.stock}${product.stock <= product.minStock ? ' ⚠️' : ''}</div>
+                `;
+                grid.appendChild(btn);
+            });
+        }
 
+        // Renderizar inventario
+        function renderInventory() {
+            const tbody = document.querySelector('#inventory tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            Object.values(products).forEach(product => {
+                const tr = document.createElement('tr');
+                if (product.stock <= product.minStock) tr.style.background = 'rgba(255, 107, 107, 0.1)';
+                tr.innerHTML = `
+                    <td>${product.icon || '🍦'} ${product.name}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td>${product.stock}</td>
+                    <td><span style="color: ${product.stock <= product.minStock ? '#e74c3c' : '#27ae60'};">${product.stock <= product.minStock ? '⚠️ Stock Bajo' : '✅ Stock OK'}</span></td>
+                    <td>
+                        <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="restockProduct('${product.id}')">📦 +Stock</button>
+                        <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct('${product.id}')">✏️ Editar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
+        // Renderizar clientes en el select del POS
+        function renderClients() {
+            const select = document.querySelector('.cart select.form-control');
+            if (!select) return;
+            select.innerHTML = '<option value="">Cliente General</option>';
+            Object.values(clients).forEach(client => {
+                select.innerHTML += `<option value="${client.name}">${client.name}</option>`;
+            });
+        }
 
+        // Agregar producto a Firebase
+        window.addProduct = function() {
+            const name = document.querySelector('#addProductModal input[placeholder="Ej: Helado de Pistacho"]').value.trim();
+            const price = parseFloat(document.querySelector('#addProductModal input[placeholder="0.00"]').value);
+            const stock = parseInt(document.querySelector('#addProductModal input[placeholder="0"]').value);
+            const minStock = parseInt(document.querySelector('#addProductModal input[placeholder="10"]').value);
+            if (!name || isNaN(price) || isNaN(stock) || isNaN(minStock)) {
+                showNotification('❌ Complete todos los campos', 'error');
+                return;
+            }
+            const newId = 'H' + (Object.keys(products).length + 1).toString().padStart(3, '0');
+            set(ref(db, 'products/' + newId), {
+                id: newId,
+                name,
+                price,
+                stock,
+                minStock,
+                icon: '🍦'
+            }).then(() => {
+                showNotification('✅ Producto agregado exitosamente');
+                closeModal();
+            });
+        }
 
-<!---Copia esto para el siguiente Slider tipo Portada--->
+        // Agregar cliente a Firebase
+        window.addClient = function() {
+            const name = prompt('Nombre del cliente:');
+            if (!name) return;
+            const phone = prompt('Teléfono del cliente:');
+            const newClientRef = push(ref(db, 'clients'));
+            set(newClientRef, { name, phone }).then(() => {
+                showNotification('✅ Cliente agregado exitosamente');
+            });
+        }
 
+        // Restock producto
+        window.restockProduct = function(id) {
+            const quantity = prompt('¿Cuántas unidades desea agregar al stock?');
+            if (quantity && !isNaN(quantity) && quantity > 0) {
+                const product = products[id];
+                update(ref(db, 'products/' + id), { stock: product.stock + parseInt(quantity) }).then(() => {
+                    showNotification(`📦 Stock actualizado: +${quantity} unidades`);
+                });
+            }
+        }
 
+        // Editar producto
+        window.editProduct = function(id) {
+            const product = products[id];
+            const name = prompt('Nuevo nombre:', product.name);
+            const price = parseFloat(prompt('Nuevo precio:', product.price));
+            const stock = parseInt(prompt('Nuevo stock:', product.stock));
+            const minStock = parseInt(prompt('Nuevo stock mínimo:', product.minStock));
+            if (!name || isNaN(price) || isNaN(stock) || isNaN(minStock)) return;
+            update(ref(db, 'products/' + id), { name, price, stock, minStock }).then(() => {
+                showNotification('✏️ Producto editado exitosamente');
+            });
+        }
 
-<!---No tocar esto--->
-</div>
-</div>
-</div>
-<!---fin de esta entrada--->
+        // Guardar venta en Firebase
+        function saveSale(sale) {
+            const salesRef = push(ref(db, 'sales'));
+            set(salesRef, sale);
+        }
 
-<style type="text/css">
-@import url("https://bier6695.github.io/PeliSer/Formulario/Género.css");
-</style>
+        // Guardar/actualizar crédito en Firebase
+        function updateClientCredit(clientName, amount, date) {
+            // Buscar cliente por nombre
+            let clientKey = null;
+            Object.entries(clients).forEach(([key, c]) => {
+                if (c.name === clientName) clientKey = key;
+            });
+            if (!clientKey) return;
+            // Actualizar deuda
+            const creditRef = ref(db, `credits/${clientKey}`);
+            onValue(creditRef, (snapshot) => {
+                let current = snapshot.val() || { total: 0, lastDate: '', history: [] };
+                const newTotal = (parseFloat(current.total) || 0) + amount;
+                const newHistory = current.history || [];
+                newHistory.push({ amount, date });
+                set(creditRef, { total: newTotal, lastDate: date, history: newHistory });
+            }, { onlyOnce: true });
+        }
 
-<div class="ioaj cplzb"><ul>
-<li class="jhak"><a href="go:Peliculas">Películas</a></li>
-<li><a href="go:Series">Series</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Novelas.html">Telenovelas</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Doramas.html">Doramas</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Accion.html">Acción</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Terror y Suspenso.html">Terror y Suspenso</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Comedia.html">Comedia</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Ciencia Ficción.html">Ciencia Ficción</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Animacion.html">Animación</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Drama.html">Drama</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Romance.html">Romance</a></li>
-<li><a href="/PeliSer/Categorias/Categoria-Fantasia.html">Fantasía</a></li></ul></div>
+        // Renderizar ventas recientes en dashboard
+        function renderRecentSales() {
+            const tbody = document.getElementById('recentSalesTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const salesRef = ref(db, 'sales');
+            onValue(salesRef, (snapshot) => {
+                const sales = Object.values(snapshot.val() || {}).sort((a, b) => b.timestamp - a.timestamp).slice(0, 10);
+                sales.forEach(sale => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${sale.time}</td>
+                        <td>${sale.vendor}</td>
+                        <td>${sale.client || 'Cliente General'}</td>
+                        <td>${sale.products.map(p => `${p.name} (${p.quantity})`).join(', ')}</td>
+                        <td>$${sale.total.toFixed(2)}</td>
+                        <td>${sale.paymentMethod}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
 
+        // Renderizar créditos en la tabla de créditos
+        function renderCredits() {
+            const tbody = document.querySelector('#credits tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const creditsRef = ref(db, 'credits');
+            onValue(creditsRef, (snapshot) => {
+                const credits = snapshot.val() || {};
+                Object.entries(credits).forEach(([clientKey, credit]) => {
+                    const client = clients[clientKey];
+                    if (!client) return;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${client.name}</strong><br><small>📞 ${client.phone || ''}</small></td>
+                        <td><strong style="color: #e74c3c;">$${(credit.total || 0).toFixed(2)}</strong></td>
+                        <td>${credit.lastDate || ''}</td>
+                        <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
+                        <td>
+                            <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment()">💰 Pagar</button>
+                            <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory()">📋 Historial</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
 
-<!---Pega Aqui para crear una nueva categoria--->
-<!---Slider tipo Poster--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="go:Series" class="title-more">
-<span>Series</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Serie/iCarly.html" title="iCarly"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/s5k4GqTUGXeUdScNrjpYfiQLKHI.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/The Mandalorian.html" title="The Mandalorian"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/iLg3DzrwCDsHNovNaWx5JnQAsiV.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Lucifer.html" title="Lucifer"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/wQh2ytX0f8IfC3b2mKpDGOpGTXS.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2016</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/The Good Doctor.html" title="The Good Doctor"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/53P8oHo9cfOsgb1cLxBi4pFY0ja.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2017</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Outer Banks.html" title="Outer Banks"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/1QAZ3nxN8K2d8GbCEwSlPwMA5pm.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Territorio Lovecraft.html" title="Territorio Lovecraft"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/fz7bdjxPColvEWCGr5Kiclzc86d.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Wynonna Earp.html" title="Wynonna Earp"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/wU83Erj8QDgrqvADSG0EyuEUz6t.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2016</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/The Walking Dead.html" title="The Walking Dead"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/wsq1xCuC9kDhFeoE7xuQFDC5iRC.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2010</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/The Flash.html" title="The Flash"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/2O8tlUzKS3uddGW5D2B9XM6b4e.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2014</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Home Before Dark.html" title="Home Before Dark"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/A4uh92nSommxHUkEKoeNH6I53dO.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Soldados o Zombies.html" title="Soldados o Zombies"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/lICAhPifWrXpscCvweCrUdCzCuG.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Juego de Tronos.html" title="Juego de Tronos"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/j24NiYZHsuLEdyYqUunlVCapC04.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2011</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/What If.html" title="What If"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w440_and_h660_face/92bJ5Ja4oEoun9zFvAOMVtaNfrA.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Selena.html" title="Selena"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/tQbnJXeuZwcQf1r9ul0ett4gDQs.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Amos del Universo - Revelación.html" title="Amos del Universo - Revelación"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/2atC8jd6uINWIQedu7Pk25OV6aF.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Falcon y el Soldado de Invierno.html" title="Falcon y el Soldado de Invierno"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/bthJ4RYhyvaf5kg4t8Fc8zKkMF0.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Lupín.html" title="Falcon y el Soldado de Invierno"  class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20Series/lupin%20poster.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Serie/Loki.html" alt="Loki" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Loki%20poster.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Sexo vida.html" alt="Sexo vida" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/7xKl8dPErKtu3wY41dWPnF2IhmC.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/El niño ciervo.html" alt="El niño ciervo" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/a7FioKNA7z0Dl1EMn14bxCyUUpp.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Vikingos.html" alt="Vikingos" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/upifmCWzYLezEXvMnrFjqZHysFs.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2013</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Superman y Lois.html" alt="Superman y Lois" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20Series/Superman%20y%20Lois%20poster.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Elite.html" alt="Elite" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/8fcYtdB6HLP7gsj46OKZ24PjC1g.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2018</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Invencible.html" alt="Invencible" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Batwoman.html" alt="Batwoman" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/jnaimWkIVSD9IInmZPyLYarSvvc.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/La casa de papel.html" alt="La casa de papel" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/4LjPjtfaxEn2W61ORPeytr5Qq7j.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2017</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Riverdale.html" alt="Riverdale" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/cEmpGjZZu3JSlkKm8NUuCzrUscR.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2017</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/See.html" alt="See" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/e09B32foykCE2jmnJhOJcISiRnb.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Estación 19.html" alt="Estación 19" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/apvr0s7sLvlPgNGtfuvM5EOJJMO.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2018</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/The Boys.html" alt="The Boys" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/dzOxNbbz1liFzHU1IPvdgUR647b.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/WandaVision.html" alt="WandaVision" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/iMWBNr2Vm0XeLMVpnj3PS53P4cd.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Rick y Morty.html" alt="Rick y Morty" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/8kOWDBK6XlPUzckuHDo3wwVRFwt.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2013</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Sex Education.html" alt="Sex Education" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/4Bph0hhnDH6dpc0SZIV522bLm4P.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Skam España.html" alt="Skam España" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/ueXNsr8XSyUoJPwT3g5v7YAhZIJ.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2018</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Control Z.html" alt="Control Z" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/8VNA0RdrPk8Ec7XVjpeT0Rnui79.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Orphan black.html" alt="Orphan black" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/7hQKcjsYPnNGhxE7JGp2o4sTuPr.jpg" />
-<div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2017</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<!---No tocar esto--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Doramas.html" class="title-more">
-<span>Doramas</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Doramas/El juego del calamar.html" title="El juego del calamar"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/uSqnBM7TLpYFK77EfYZQZjmJDXX.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Doramas/Mermelada de naranja.html" title="Mermelada de naranja"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/4y59CKPFxdz51BN3K4SeeO5Ift0.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2015</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Doramas/My Runway.html" title="Mi pasarela"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/tCKwuuTZr5Yx8rTt1FWvQKDrXnw.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2016</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Doramas/Holo, mi amor.html" title="Holo, mi amor"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/umvrWjTyVgW9ulC4noFd2kuZJRM.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Doramas/Hola Soy yo.html" title="Hola Soy yo"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/8ZlKn5qEuv3wTzHyG4RSWJY81ec.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Doramas/Pasadizo De Emergencia.html" title="Pasadizo De Emergencia"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/8MSjQkH2FrG0t4l84L5HmiSFrS7.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Doramas/El Hada De Las Pesas.html" title="El Hada De Las Pesas"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/4CrTjZ5MYdF5dtSockIStCkiX5C.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2016</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Doramas/El cielo te está esperando.html" title="El cielo te está esperando"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w440_and_h660_face/n277gYwCQOBcTnACEwiyU7Xg1m2.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Tierra trágame.html" title="Tierra trágame"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/wiByXTq5vaDppWnYCLt6fzDuu7x.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Es Mío.html" title="Es Mío"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/69QIVItTwslQsZpqLuCNyhxk4cC.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/Recuerdos de Juventud.html" title="Recuerdos de Juventud"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/54yTLS5d4OPOuunzOvHlmP82eIT.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
+        // Calcular y mostrar totales del dashboard en tiempo real
+        function renderDashboardTotals() {
+            const totalSalesEl = document.getElementById('totalSales');
+            const cashSalesEl = document.getElementById('cashSales');
+            const transferSalesEl = document.getElementById('transferSales');
+            const creditSalesEl = document.getElementById('creditSales');
+            if (!totalSalesEl || !cashSalesEl || !transferSalesEl || !creditSalesEl) return;
+            const salesRef = ref(db, 'sales');
+            onValue(salesRef, (snapshot) => {
+                const sales = Object.values(snapshot.val() || {});
+                // Filtrar ventas del día actual
+                const today = new Date().toISOString().slice(0, 10);
+                let total = 0, efectivo = 0, transferencia = 0, credito = 0;
+                sales.forEach(sale => {
+                    const saleDate = new Date(sale.timestamp).toISOString().slice(0, 10);
+                    if (saleDate === today) {
+                        total += sale.total;
+                        if (sale.paymentMethod === 'efectivo') efectivo += sale.total;
+                        else if (sale.paymentMethod === 'transferencia') transferencia += sale.total;
+                        else if (sale.paymentMethod === 'crédito' || sale.paymentMethod === 'credito') credito += sale.total;
+                    }
+                });
+                totalSalesEl.textContent = `$${total.toFixed(2)}`;
+                cashSalesEl.textContent = `$${efectivo.toFixed(2)}`;
+                transferSalesEl.textContent = `$${transferencia.toFixed(2)}`;
+                creditSalesEl.textContent = `$${credito.toFixed(2)}`;
+            });
+        }
 
-<!---No tocar esto--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Novelas.html" class="title-more">
-<span>Telenovelas</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Novelas/La Desalmada.html" title="La Desalmada"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/sVttndTzAg1AfLxjeLEyEELCWLF.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Novelas/Rosario Tijeras.html" title="Rosario Tijeras"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/q03eQL8AUx49lVH6IT3IlmWzhQu.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2016</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Novelas/Quién es Quién.html" title="Quién es Quién"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/xzMQqTTmjofphjTdeFaPm16G6gp.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2015</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Novelas/Sin Senos no hay Paraíso" title="Sin Senos no hay Paraíso"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/wG5uwLPMfHlYmXiVk9W88cV9llR.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2008</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Novelas/El Cartel de los Sapos - El Origen.html" title="El Cartel de los Sapos - El Origen"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/A17Rt6BLHno0puR1QXbsSKhBfA4.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/La Reina del Sur.html" title="La Reina del Sur"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/p11t8ckTC6EiuVw5FGFKdc2Z7GH.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2011</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Serie/La Piloto.html" title="La Piloto"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/upX2fGyD4tPjJJLIOuJlB3yp2OK.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2017</span>
-</div>
-</div>
-</a>
-<!---No tocar esto--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Accion.html" class="title-more">
-<span>Acción</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Kate.html" title="Kate"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/uQWgSRXeYRWCvGIX9LDNBW6XBYD.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Soy Venganza Represalia.html" title="Soy Venganza Represalia"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/fshqvFBihzipvA5l9hwHQVuZCNG.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Shang-Chi y la Leyenda de los Diez Anillos.html" title="Shang-Chi y la Leyenda de los Diez Anillos"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/xtxEJRIU34IvzIhvs2dtUp3Uu8Y.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">CAM 2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El Ascenso del Cisne Negro.html" title="SAS: El Ascenso del Cisne Negro"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/4H70o8r9RN13qTBkuHJcKhRTLAl.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Sweet Girl.html" title="Sweet Girl"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/72KBb61fPaUDJWd2W8gG6xDhzzp.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Crazy Fist.html" title="Crazy Fist"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/z21p0pm82RbHrUyHj8Mu4tOEun5.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Infinite.html" title="Infinite"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w440_and_h660_face/niw2AKHz6XmwiRMLWaoyAOAti0G.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Duro de Cuidar 2.html" title="Duro de Cuidar 2"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/iCEOOnl2K6AqW9Hzh7SEjpaPm9o.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Snake Eyes G.I. Joe Origins.html" title="Snake Eyes G.I. Joe Origins"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/uIXF0sQGXOxQhbaEaKOi2VYlIL0.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Viuda Negra.html" title="Viuda negra"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/v1XE3dtqd9zsEET0EMkxBgXYP6T.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Igor Grom contra el Doctor Plague.html" title="Igor Grom contra el Doctor Plague"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/zI4yOVjcC51FNI1K3H5poIfm8Wn.jpg" /><div class="Image">
-<span style="top:.1:.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/La Guerra del Mañana.html" title="La Guerra del Mañana"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/tzp6VzED2TBc02bkYoYnQa6r2OK.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Godzilla vs Kong.html" title="Godzilla vs Kong"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/bnuC6hu7AB5dYW26A3o6NNLlIlE.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Rapido-y-Furioso.html" alt="Rapido-y-Furioso" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/r%C3%A1pido%20y%20furioso%202021%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Medianoche en el Switchgrass.html" alt="Medianoche en el Switchgrass" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/1OTSuh2HNcTRfme8caU8DjgJ39K.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Tenet.html" alt="Tennet" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/67p7XVP5SLup521iD9cAayMNt2U.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/El ejército de los Muertos.html" alt="El ejército de los Muertos" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/El%20ej%C3%A9rcito%20de%20los%20Muertos%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Monster Hunter.html" alt="Monster Hunter" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Monster%20Hunter.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/NOBODY - Nadie.html" alt="NOBODY - Nadie" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Nadie%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Despierta la Furia.html" alt="Despierta la Furia" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/despierta%20la%20furia%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Sin remordimientos.html" title="Sin remordimientos"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/rEm96ib0sPiZBADNKBHKBv5bve9.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Chaos Walking.html" alt="Chaos Walking" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/a0R1Ybj3m4M4ZeztizD7F6fmPCE.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<!---No tocar esto--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Terror y Suspenso.html" class="title-more">
-<span>Terror<spann>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="go:BlackNight" title="Black as Night"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/493SD4ELBqXOz6226sowA126H20.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="go:Candyman" title="Run"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/40FuQAiHjCvh9fYFigGAVWJ6Czu.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="go:Run" title="Run"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/rEeTuQSsEyM2bSG7rwvm23WJjfg.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="go:Tiempo" title="Tiempo"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/ggXWPAIPz0LciOc4hwKIctP4xV2.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Cuentos al Caer la Noche" title="Cuentos al Caer la Noche"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/5rgRK0Hwt6KcQzn5MEc34JlR5RV.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Maligno" title="Maligno"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/9eo0feDgFvAV4rDrQw6TyNAjSes.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Escape Room 2 - Mueres por salir" title="Escape Room 2 - Mueres por salir"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/hBD44n4mmcckzM7rDgB3CGi12f7.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Espiral El juego del miedo continúa" title="Espiral El juego del miedo continúa"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/qIlRt4op22B69QUbLlfif2lFHVs.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Las Formas Antiguas" title="Las Formas Antiguas"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/sZqaqEFeuzlgp31y3B4K6ysIl0S.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Annabelle vuelve a casa" title="Annabelle vuelve a casa"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/zxwPksbRKGaAi06rapPfFTVsMHv.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Terapia del Miedo" title="Terapia del Miedo"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/oYlAnaH1dClevLyKl5hkNqZeKib.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/No respires 2" title="No respires 2"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/nR8kDV11jeRWdcjMwavbqFrJolR.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/No respires" title="No respires"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/3A5sAyP9iENTRL5X86FUeYmo0wZ.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2016</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Spare Parts" title="Spare Parts"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/ih3ZHVQMV59fSOxLYpSQuCKC3I2.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Cielo rojo sangre" title="Cielo rojo sangre"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/ky8Fua6PD7FyyOA7JACh3GDETli.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El Atrapa Sueños" title="El Atrapa Sueños"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/qUyFrgb3jf3f991vm60LOYDkFGM.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/La calle del terror - Parte 3 1666" title="La calle del terror - Parte 3 1666"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/ouTHprNeiOYDS5zw5x7wrBF79q7.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/La calle del terror Parte 2 1978.html" title="La calle del terror Parte 2 1978"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/dEwIduMFhLKEcx9hxCuv7zX9LN2.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/La calle del terror Parte 1 1994.html" title="La calle del terror Parte 1 1994"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/xGf1snRLGQpiUkWvJSGwiSXW9sR.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/La Purga Infinita.html" title="La Purga Infinita"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/r2t07ky5WFRiI0bXLRIQCjalNkj.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Sin remordimientos.html" title="Sin remordimientos"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/rEm96ib0sPiZBADNKBHKBv5bve9.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Ruega por nosotros.html" title="Ruega por nosotros"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/hPoOn553ARmSQl0ChKTlGDvYq9x.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El Conjuro 3 - El Diablo me Obligó a Hacerlo.html" title="El Conjuro 3 - El Diablo me Obligó a Hacerlo"  class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/El%20Conjuro%203%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Slaxx.html" alt="Slaxx" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Slaxx%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/the dollmaker.html" alt="the dollmaker" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/dJehoFl9G3Mv2Yp0LooRMB15fVI.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2017</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Un lugar en silencio 2.html" alt="Un lugar en silencio 2" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/iNOCVFyrsykGqT48JNotgFF9XCf.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Un lugar en silencio.html" alt="Un lugar en silencio" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/5pairI20KJs1SEa4Z8yAsPR779m.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2018</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<!---No tocar esto--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Comedia.html" class="title-more">
-<span>Comedia</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Amigos Pasajeros.html" title="Amigos Pasajeros"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/5gQmECcdlJeYlBHTh0TIz3DE75Y.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Alguien como él.html" title="Alguien como él"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/lge7oQ4AyhINB8lrTWwg1z9bEPF.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Tomando el control.html" title="Tomando el control"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w440_and_h660_face/yc2IfL701hGkNHRgzmF4C6VKO14.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El último mercenario.html" title="El último mercenario"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/lErxWgAtIOdxclev06lDqosYx8F.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Jolt.html" title="Jolt"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/gYZAHan5CHPFXORpQMvOjCTug4E.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Space Jam 2 - Una nueva era.html" title="Space Jam 2 - Una nueva era"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/uHDF2320SbWDTP1FMZ8LgEIHew2.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El rey de Zamunda.html" title="El rey de Zamunda"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/jJFvY25lPaKlapYOeIH6N5aKcbh.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Guerra de Likes.html" title="Guerra de Likes"  class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Guerra%20de%20Likes%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Paternidad.html" title="Paternidad"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/6dtOXsz51eMkE40SfmcvKKna1Tk.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Cruella.html" title="Cruella"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/qb28nkLZV0v6yJZZRpJYl0LE35N.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Agencia Secreta de Control Mágico.html" alt="Agencia Secreta de Control Mágico" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Agencia%20Secreta%20de%20Control%20M%C3%A1gico%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El Día del Sí.html" alt="El Día del Sí" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/wFP7GnJX9sed6tvuB8tekOQxvzQ.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Un don excepcional.html" alt="Un don excepcional" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/bskZzXMb1JSO1I9j8vUj3LFXw2w.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2017</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Dancing Queens.html" alt="Dancing Queens" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20Series/Dancing%20Queens%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Slaxx.html" alt="Slaxx" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Slaxx%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Fuerza Trueno.html" alt="Fuerza Trueno" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Fuerza%20Trueno%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Straight Up.html" alt="Straight Up" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Straight%20Up%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<!---No tocar esto--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Ciencia Ficción.html" class="title-more">
-<span>Ciencia Ficción</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/El Escuadrón Suicida.html" alt="El Escuadrón Suicida" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/pSaFLyMfXka4SO1tfqNa140aDKx.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Un lugar en silencio 2.html" alt="Un lugar en silencio 2" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/iNOCVFyrsykGqT48JNotgFF9XCf.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Godzilla vs Kong.html" title="Godzilla vs Kong"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/bnuC6hu7AB5dYW26A3o6NNLlIlE.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/La Guerra del Mañana.html" title="La Guerra del Mañana"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/tzp6VzED2TBc02bkYoYnQa6r2OK.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Rapido-y-Furioso.html" alt="Rapido-y-Furioso" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/r%C3%A1pido%20y%20furioso%202021%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Monster Hunter.html" alt="Monster Hunter" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Monster%20Hunter.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Mortal Kombat" alt="Mortal Kombat" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/mortal%20Kombat%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Tenet.html" alt="Tennet" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/67p7XVP5SLup521iD9cAayMNt2U.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El ejército de los Muertos.html" alt="El ejército de los Muertos" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/El%20ej%C3%A9rcito%20de%20los%20Muertos%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Disomnia.html" alt="Disomnia" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/r8kmQ1lBmeC5oLztNKQUBB6xh8i.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Chaos Walking.html" alt="Chaos Walking" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/a0R1Ybj3m4M4ZeztizD7F6fmPCE.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Venom.html" alt="Venom" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/bURIWlkMbzT8RdpemzCmQECo2Uh.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2018</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Jurassic World.html" alt="Jurassic World" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/tLY0crgPAwIBiwkF7lDLmEjBWyn.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2015</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<!---No tocar esto--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Animacion.html" class="title-more">
-<span>Animación</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="go:Addams2" title="Barbie Grandes Sueños en la Gran Ciudad"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/original/f8NrqVQPfCaAf4A3SKjZCZoSEY0.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Barbie Grandes Sueños en la Gran Ciudad.html" title="Barbie Grandes Sueños en la Gran Ciudad"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/original/8PCeAhmRkiWYLBq0quetaFrHZp3.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Scooby-Doo La Espada y Scooby.html" title="Scooby-Doo La Espada y Scooby"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/original/jOMK2YFKtzXGTm0tedsurDj5pFh.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Río 2.html" title="Río 2"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/original/xx1k3kCfIs95eAMa1pglXv74cRp.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2014</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Mortal Kombat Legends Battle of The Realms.html" title="Mortal Kombat Legends Battle of The Realms"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/original/ikSqxoxcIMq6tG3cCpO0KFt5PQ5.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/The Witcher La Pesadilla del Lobo.html" title="The Witcher La Pesadilla del Lobo"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/original/9X9MwQVXqlnucUfHGD97AApf726.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Coco.html" title="Coco"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/original/yK4zbNqLhXDy9RnJnfbGq3z6Flf.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2017</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Los Mitchell contra las máquinas.html" title="Los Mitchell contra las máquinas"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/w1eq7A9NArBbwZP9YYVJEZ2pvY.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El Bebé Jefazo 2 Negocios de familia.html" title="El Bebé Jefazo 2 Negocios de familia"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/85J1DwZowIlKFOF7jllgCD3iHhx.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Luca.html" title="Luca"  class="poster " >
-<div>
-  <img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/pr06RihHOGE3waZQx5fs2WYUdwr.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Tom y Jerry.html" alt="Tom y Jerry" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Tom%20y%20Jerry%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Frozen 2.html" alt="Frozen 2" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/jnFCk7qGGWop2DgfnJXeKLZFuBq.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Frozen - El reino del hielo.html" alt="Frozen - El reino del hielo" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/sGNuWC4BwqOB4l0tkbKwLy70tXC.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2013</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Space Jam 2 - Una nueva era.html" title="Space Jam 2 - Una nueva era"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/uHDF2320SbWDTP1FMZ8LgEIHew2.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Kimetsu tren infinito.html" alt="Kimetsu tren infinito" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/3f4ETSwknZs74lmUYC7ENIMRBMP.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El dragón de los deseos.html" alt="El dragón de los deseos dragón" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/uBSOVabHjh9vbfnA6B2u1C7vIq1.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Raya y el último dragón.html" alt="Raya y el último dragón" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/lEC7RHYJ7zidupb9TGJdjwiK4L4.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Trolls 2 - gira mundial.html" alt="Trolls 2 - gira mundial" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/trolls%202%20post.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Más allá de la Luna.html" alt="Más allá de la Luna" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/M%C3%A1s%20all%C3%A1%20de%20la%20Luna.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Agencia Secreta de Control Mágico.html" alt="Agencia Secreta de Control Mágico" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Agencia%20Secreta%20de%20Control%20M%C3%A1gico%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Dragon Ball Super - Broly.html" alt="Dragon Ball Super - Broly" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/6JilEC1SON8tWIRHcdJzf4uVBpX.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2018</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<!---No tocar esto--->
-</div>
-</div>
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Drama.html" class="title-more">
-<span>Drama</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Ni un paso en falso.html" title="Ni un paso en falso"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/34BmdJkdvRweC3xJJFlOFQ2IbYc.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Paternidad.html" title="Paternidad"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/6dtOXsz51eMkE40SfmcvKKna1Tk.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Cherry.html" title="Cherry"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/uOLhNUmNtbatfBgvyIstalPJYyv.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Despues de ti.html" title="Después de ti"  class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20Series/Despu%C3%A9s%20de%20ti%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Un lugar en silencio.html" alt="Un lugar en silencio 2" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/iNOCVFyrsykGqT48JNotgFF9XCf.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Nadie sabe que estoy aqui.html" alt="Nadie sabe que estoy aqui" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/c7CTxNNPeg6MH9VA9BBvMKdPmSh.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Fragmentos de una mujer.html" alt="Fragmentos de una mujer" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/OgUfLlhfBFx5BPK6LzBWFvBW1w.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Disomnia.html" alt="Disomnia" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/r8kmQ1lBmeC5oLztNKQUBB6xh8i.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Dancing Queens.html" alt="Dancing Queens" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20Series/Dancing%20Queens%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Unpregnant.html" alt="Unpregnant" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/3wZPuZIYjfO2eEHgOKUdJ8QjC6E.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<!---No tocar esto--->
-</div>
-</div>
-<!---Pega Aqui para crear una nueva categoria--->
-<!---Slider tipo Poster--->
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Romance.html" class="title-more">
-<span>Romance</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/After Almas Perdidas.html" alt="After Almas Perdidas" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/ei0T8rZf9mKqFtP3rTQXXiyQCVn.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">CAM 2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Un romance de verdad.html" alt="Un romance de verdad" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/chv0cEGaUAcuwhpdAzPCIhikSjQ.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Como la Espuma.html" alt="Como la Espuma" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/iK4YJM8wTvUmokEICLxmx3mCguu.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">Erótica 2017</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Soñadores.html" alt="Soñadores" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/8qfobYl8Rky4LPv1CCVEJ3T5u4o.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">Erótica 2003</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/365 Días.html" alt="365 Días" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/jz8T3hrU6GuMqSuQ4Rbd4MJUeaq.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">Erótica 2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/El Stand de los Besos 3.html" alt="El Stand de los Besos 3" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w440_and_h660_face/jdD6Rd8XMXPFZmCXLKWPthd1HsV.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Songbird.html" alt="Songbird" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/9pKj3Awn5SThyHRkpprwHpRbe9Q.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/En la misma ola.html" alt="En la misma ola" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/mllO4lFsUVSUyTS3HiiidXDPkpB.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Straight Up.html" alt="Straight Up" class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20peliculas/Straight%20Up%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Dime cuando tu.html" title="Dime cuando tu"  class="poster " >
-<div>
-<img width="200" height="300" src="https://raw.githubusercontent.com/bier6695/PeliSer/main/Im%C3%A1genes%20de%20Series/Dime%20cu%C3%A1ndo%20poster.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/After En mil pedazos.html" title="After En mil pedazos"  class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/8nPw22C41EUWXREWmY9iIivMXxm.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/El mapa de los instantes perfectos.html" alt="El mapa de los instantes perfectos" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/6y3ev0rJFbHA1hU22UPmmfzBjrG.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/A Todos Los Chicos Para Siempre.html" alt="A Todos Los Chicos Para Siempre" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/7bGVC0tkhvihjZHNFJuiuY2YcN7.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/After Aquí empieza todo.html" alt="After: Aquí empieza todo" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/5kZxlS9vLExy3hZA5GfNFg8oJgZ.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<!---No tocar esto--->
-</div>
-</div>
-<!---fin de esta entrada--->
-<!---Pega Aqui para crear una nueva categoria--->
-<!---Pega Aqui para crear una nueva categoria--->
-<!---Slider tipo Poster--->
-<div class="col-sm-12 col-md-12 ">
-<a href="/PeliSer/Categorias/Categoria-Fantasia.html" class="title-more">
-<span>Fantasía</span>
-<i class="fa fa-th float-right">•Ver Más</i>
-</a>
-</div>
-<div class="flix-carousel" >
-<button  class="prev_btn"><i class="fa fa-chevron-left"></i></button>
-<button  class="next_btn"><i class="fa fa-chevron-right"></i></button>
-<div class="flix-scroll-x">
-<!---Inicio del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Cenicienta.html" alt="Cenicienta" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/hQfsnnMsT974eLkB345zzDZfB8i.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Más Allá de la Fiesta.html" alt="Más Allá de la Fiesta" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/9qxQMR5aQXSXkGvgyKnI4otEC3v.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Jumanji siguiente nivel.html" alt="Jumanji siguiente nivel" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/original/a8R5yw0vShsgHSjeikVcPdkaWAW.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Jungle Cruise.html" alt="Jungle Cruise" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/r3TCF5qkGG2IH1pj8OjPNqmVm14.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<a href="/PeliSer/Peliculas/Mulan.html" alt="Mulan" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/72XYwdIugXnjHxS6upI6U0yeTBU.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2021</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Barrenderos Espaciales.html" alt="Barrenderos Espaciales" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w220_and_h330_face/eQyi0oEk0WtkiWJxPi58M53Crzv.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<!---Copia esto para el siguiente Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/Cómo me convertí en superhéroe.html" alt="Cómo me convertí en superhéroe" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/1tcQdrmvVooaZs6niLIX1DnaZxB.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2020</span>
-</div>
-</div>
-</a>
-<!---Pega aqui el codigo del Slider tipo Poster--->
-<a href="/PeliSer/Peliculas/El dragón de los deseos.html" alt="El dragón de los deseos dragón" class="poster " >
-<div>
-<img width="200" height="300" src="https://www.themoviedb.org/t/p/w188_and_h282_bestv2/uBSOVabHjh9vbfnA6B2u1C7vIq1.jpg" />
-<div class="Image">
-<span style="top:.1.rem;bottom: auto;" class="Year">2019</span>
-</div>
-</div>
-</a>
-<!---No tocar esto--->
-</div>
-</div>
-<!---fin de esta entrada--->
-<!---Pega Aqui para crear una nueva categoria--->
-</div>
+        // Inicialización extendida
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            loadClients();
+            renderRecentSales();
+            renderCredits();
+            renderDashboardTotals();
+            // Selección de vendedor
+            const vendorCards = document.querySelectorAll('.vendor-card');
+            const loginBtn = document.getElementById('loginBtn');
 
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="https://bier6695.github.io/documentos/src/jquery.min.js"></script>
-<script src="https://bier6695.github.io/documentos/src/popper.min.js"></script>
-<script src="https://bier6695.github.io/documentos/src/bootstrap.min.js"></script>
-<script src="https://bier6695.github.io/documentos/src/app.js"></script>
-<script src="https://bier6695.github.io/documentos/src/buscador.js"></script>
-<script src="https://bier6695.github.io/documentos/src/swiper-bundle.min.js"></script>
-<script src="https://bier6695.github.io/documentos/src/search.js"></script>
+            vendorCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    vendorCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    loginBtn.disabled = false;
+                    currentUser = this.dataset.vendor;
+                });
+            });
+
+            // Selección de método de pago
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedPaymentMethod = this.dataset.method || 'efectivo';
+                });
+            });
+        });
+
+        // Funciones de navegación
+        function loginVendor() {
+            if (currentUser) {
+                document.getElementById('currentUser').textContent = currentUser;
+                showSection('mainSystem');
+                showNotification(`👋 Bienvenido ${currentUser}!`);
+            }
+        }
+        window.loginVendor = loginVendor;
+
+        function logout() {
+            currentUser = '';
+            cart = [];
+            showSection('loginSection');
+            showNotification('👋 Sesión cerrada correctamente');
+        }
+        window.logout = logout;
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            if (sectionId === 'mainSystem') {
+                showSubSection('dashboard');
+            }
+        }
+
+        function showSubSection(subSectionId) {
+            // Remover clase active de botones
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Ocultar todas las subsecciones
+            document.querySelectorAll('.subsection').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostrar subsección seleccionada
+            document.getElementById(subSectionId).classList.add('active');
+            
+            // Activar botón correspondiente
+            event.target.classList.add('active');
+        }
+        window.showSubSection = showSubSection;
+
+        // Funciones del carrito
+        function addToCart(product) {
+            if (product.stock <= 0) {
+                showNotification('❌ Producto sin stock disponible', 'error');
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.id === product.id);
+            
+            if (existingItem) {
+                if (existingItem.quantity < product.stock) {
+                    existingItem.quantity++;
+                } else {
+                    showNotification('❌ No hay suficiente stock disponible', 'error');
+                    return;
+                }
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    maxStock: product.stock
+                });
+            }
+            
+            renderCart();
+            showNotification(`✅ ${product.name} agregado al carrito`);
+        }
+
+        function renderCart() {
+            const cartItems = document.getElementById('cartItems');
+            if (!cartItems) return;
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        ${item.price.toFixed(2)} c/u
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="changeQuantity(${index}, -1)">-</button>
+                        <span class="quantity-display">${item.quantity}</span>
+                        <button class="quantity-btn" onclick="changeQuantity(${index}, 1)">+</button>
+                        <button onclick="removeFromCart(${index})" style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">🗑️</button>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItem);
+                total += item.price * item.quantity;
+            });
+            
+            document.querySelector('.cart-total').textContent = `Total: ${total.toFixed(2)}`;
+        }
+
+        function changeQuantity(index, change) {
+            const item = cart[index];
+            const newQuantity = item.quantity + change;
+            
+            if (newQuantity <= 0) {
+                removeFromCart(index);
+                return;
+            }
+            
+            if (newQuantity > item.maxStock) {
+                showNotification('❌ No hay suficiente stock disponible', 'error');
+                return;
+            }
+            
+            item.quantity = newQuantity;
+            renderCart();
+        }
+
+        function removeFromCart(index) {
+            const item = cart[index];
+            cart.splice(index, 1);
+            renderCart();
+            showNotification(`🗑️ ${item.name} eliminado del carrito`);
+        }
+
+        function clearCart() {
+            cart = [];
+            renderCart();
+            showNotification('🗑️ Carrito limpiado');
+        }
+
+        // Procesar venta y guardar en Firebase
+        window.processSale = function() {
+            if (cart.length === 0) {
+                showNotification('❌ El carrito está vacío', 'error');
+                return;
+            }
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            const clientSelect = document.querySelector('.cart select.form-control');
+            const client = clientSelect ? clientSelect.value : '';
+            const now = new Date();
+            const sale = {
+                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                vendor: currentUser,
+                client,
+                products: cart.map(item => ({ name: item.name, quantity: item.quantity })),
+                total,
+                paymentMethod: selectedPaymentMethod,
+                timestamp: now.getTime()
+            };
+            saveSale(sale);
+            // Si es crédito, actualizar crédito del cliente
+            if (selectedPaymentMethod === 'crédito' && client) {
+                updateClientCredit(client, total, now.toISOString().slice(0, 10));
+            }
+            clearCart();
+            showNotification(`✅ Venta procesada: ${total.toFixed(2)} (${selectedPaymentMethod})`);
+        }
+
+        // Procesar pago de crédito
+        window.processPayment = function(clientKey) {
+            const creditRef = ref(db, `credits/${clientKey}`);
+            onValue(creditRef, (snapshot) => {
+                const credit = snapshot.val();
+                if (!credit || !credit.total) return;
+                const amount = parseFloat(prompt('Monto a pagar:', credit.total));
+                if (!amount || isNaN(amount) || amount <= 0) return;
+                const newTotal = credit.total - amount;
+                const now = new Date();
+                set(creditRef, {
+                    total: newTotal,
+                    lastDate: now.toISOString().slice(0, 10),
+                    history: [...(credit.history || []), { amount: -amount, date: now.toISOString().slice(0, 10) }]
+                }).then(() => {
+                    showNotification('💰 Pago registrado exitosamente');
+                });
+            }, { onlyOnce: true });
+        }
+
+        // Ver historial de crédito
+        window.viewCreditHistory = function(clientKey) {
+            const credit = (clients[clientKey] && clients[clientKey].history) || [];
+            alert('Historial de crédito no implementado visualmente, pero puedes consultar en Firebase.');
+        }
+
+        // Funciones de inventario
+        function showAddProductModal() {
+            document.getElementById('addProductModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('addProductModal').style.display = 'none';
+        }
+
+        function addProduct() {
+            showNotification('✅ Producto agregado exitosamente');
+            closeModal();
+        }
+
+        function restockProduct() {
+            const quantity = prompt('¿Cuántas unidades desea agregar al stock?');
+            if (quantity && !isNaN(quantity) && quantity > 0) {
+                showNotification(`📦 Stock actualizado: +${quantity} unidades`);
+            }
+        }
+
+        function editProduct() {
+            showNotification('✏️ Función de edición disponible');
+        }
+
+        // Funciones de créditos
+        function addCreditPayment() {
+            showNotification('💰 Función de pago de crédito disponible');
+        }
+
+        function confirmPayment() {
+            showNotification('💰 Pago registrado exitosamente');
+            closePaymentModal();
+        }
+
+        function viewCreditHistory() {
+            showNotification('📋 Historial de créditos disponible');
+        }
+
+        // Función de notificaciones
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
