@@ -1014,6 +1014,43 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, set, get, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-WV5eeZ-9DpTBYFFNr9_Q29Dg_hMyU6w",
+            authDomain: "heladeria-pos.firebaseapp.com",
+            databaseURL: "https://heladeria-pos-default-rtdb.firebaseio.com",
+            projectId: "heladeria-pos",
+            storageBucket: "heladeria-pos.firebasestorage.app",
+            messagingSenderId: "171441568131",
+            appId: "1:171441568131:web:6f730a3e64b79735815eb6"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Make Firebase available globally
+        window.firebaseApp = app;
+        window.firebaseDatabase = database;
+        window.firebaseRef = ref;
+        window.firebasePush = push;
+        window.firebaseSet = set;
+        window.firebaseGet = get;
+        window.firebaseUpdate = update;
+        window.firebaseRemove = remove;
+        window.firebaseOnValue = onValue;
+
+        // Initialize the app when Firebase is ready
+        console.log('Firebase inicializado correctamente');
+        window.initializeApp();
+    </script>
+
     <script>
         // Variables globales
         let currentUser = '';
@@ -1024,55 +1061,9 @@
         let credits = {};
         let sales = [];
         let currentRestockProduct = null;
-        let firebaseInitialized = false;
-
-        // Firebase variables globales
-        let firebaseApp, firebaseDatabase, firebaseRef, firebasePush, firebaseSet, firebaseGet, firebaseUpdate, firebaseRemove, firebaseOnValue;
-
-        // Inicialización de Firebase
-        async function initializeFirebase() {
-            try {
-                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
-                const { getDatabase, ref, push, set, get, update, remove, onValue } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
-
-                const firebaseConfig = {
-                    apiKey: "AIzaSyD-WV5eeZ-9DpTBYFFNr9_Q29Dg_hMyU6w",
-                    authDomain: "heladeria-pos.firebaseapp.com",
-                    databaseURL: "https://heladeria-pos-default-rtdb.firebaseio.com",
-                    projectId: "heladeria-pos",
-                    storageBucket: "heladeria-pos.firebasestorage.app",
-                    messagingSenderId: "171441568131",
-                    appId: "1:171441568131:web:6f730a3e64b79735815eb6"
-                };
-
-                firebaseApp = initializeApp(firebaseConfig);
-                firebaseDatabase = getDatabase(firebaseApp);
-                firebaseRef = ref;
-                firebasePush = push;
-                firebaseSet = set;
-                firebaseGet = get;
-                firebaseUpdate = update;
-                firebaseRemove = remove;
-                firebaseOnValue = onValue;
-
-                firebaseInitialized = true;
-                console.log('Firebase inicializado correctamente');
-                
-                // Inicializar la aplicación después de Firebase
-                initializeApp();
-            } catch (error) {
-                console.error('Error inicializando Firebase:', error);
-                showNotification('❌ Error conectando con la base de datos', 'error');
-            }
-        }
 
         // Inicialización de la aplicación
         function initializeApp() {
-            if (!firebaseInitialized) {
-                console.log('Esperando inicialización de Firebase...');
-                return;
-            }
-            
             console.log('Inicializando aplicación...');
             
             // Configurar event listeners
@@ -1125,8 +1116,8 @@
             console.log('Cargando datos desde Firebase...');
             
             // Cargar productos
-            const productsRef = firebaseRef(firebaseDatabase, 'products');
-            firebaseOnValue(productsRef, (snapshot) => {
+            const productsRef = window.firebaseRef(window.firebaseDatabase, 'products');
+            window.firebaseOnValue(productsRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     products = data;
@@ -1140,8 +1131,8 @@
             });
 
             // Cargar clientes
-            const customersRef = firebaseRef(firebaseDatabase, 'customers');
-            firebaseOnValue(customersRef, (snapshot) => {
+            const customersRef = window.firebaseRef(window.firebaseDatabase, 'customers');
+            window.firebaseOnValue(customersRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     customers = data;
@@ -1154,8 +1145,8 @@
             });
 
             // Cargar créditos
-            const creditsRef = firebaseRef(firebaseDatabase, 'credits');
-            firebaseOnValue(creditsRef, (snapshot) => {
+            const creditsRef = window.firebaseRef(window.firebaseDatabase, 'credits');
+            window.firebaseOnValue(creditsRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     credits = data;
@@ -1167,8 +1158,8 @@
             });
 
             // Cargar ventas
-            const salesRef = firebaseRef(firebaseDatabase, 'sales');
-            firebaseOnValue(salesRef, (snapshot) => {
+            const salesRef = window.firebaseRef(window.firebaseDatabase, 'sales');
+            window.firebaseOnValue(salesRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     sales = Object.values(data);
@@ -1191,8 +1182,8 @@
                 'H006': {id: 'H006', name: 'Mango', price: 3.75, stock: 35, minStock: 10, icon: '🥭'}
             };
 
-            const productsRef = firebaseRef(firebaseDatabase, 'products');
-            firebaseSet(productsRef, defaultProducts);
+            const productsRef = window.firebaseRef(window.firebaseDatabase, 'products');
+            window.firebaseSet(productsRef, defaultProducts);
             products = defaultProducts;
         }
 
@@ -1204,15 +1195,15 @@
                 'C003': {id: 'C003', name: 'Carmen Soto', phone: '809-555-6666', email: 'carmen@email.com', address: ''}
             };
 
-            const customersRef = firebaseRef(firebaseDatabase, 'customers');
-            firebaseSet(customersRef, defaultCustomers);
+            const customersRef = window.firebaseRef(window.firebaseDatabase, 'customers');
+            window.firebaseSet(customersRef, defaultCustomers);
             customers = defaultCustomers;
         }
 
         // Verificar conexión
         function checkConnection() {
-            const connectedRef = firebaseRef(firebaseDatabase, '.info/connected');
-            firebaseOnValue(connectedRef, (snapshot) => {
+            const connectedRef = window.firebaseRef(window.firebaseDatabase, '.info/connected');
+            window.firebaseOnValue(connectedRef, (snapshot) => {
                 const connected = snapshot.val();
                 const statusIndicator = document.getElementById('connectionStatus');
                 
@@ -1393,22 +1384,22 @@
             };
 
             // Guardar venta en Firebase
-            const salesRef = firebaseRef(firebaseDatabase, 'sales');
-            firebasePush(salesRef, sale);
+            const salesRef = window.firebaseRef(window.firebaseDatabase, 'sales');
+            window.firebasePush(salesRef, sale);
 
             // Actualizar stock de productos
             cart.forEach(item => {
-                const productRef = firebaseRef(firebaseDatabase, `products/${item.id}/stock`);
+                const productRef = window.firebaseRef(window.firebaseDatabase, `products/${item.id}/stock`);
                 const newStock = products[item.id].stock - item.quantity;
-                firebaseSet(productRef, newStock);
+                window.firebaseSet(productRef, newStock);
             });
 
             // Si es venta a crédito, agregar al sistema de créditos
             if (selectedPaymentMethod === 'credito' && selectedCustomer !== 'Cliente General') {
                 const customerId = Object.keys(customers).find(key => customers[key].name === selectedCustomer);
                 if (customerId) {
-                    const creditRef = firebaseRef(firebaseDatabase, `credits/${customerId}`);
-                    firebaseGet(creditRef).then((snapshot) => {
+                    const creditRef = window.firebaseRef(window.firebaseDatabase, `credits/${customerId}`);
+                    window.firebaseGet(creditRef).then((snapshot) => {
                         const currentCredit = snapshot.val() || { amount: 0, lastPurchase: '', purchases: [] };
                         const updatedCredit = {
                             customerId: customerId,
@@ -1417,7 +1408,7 @@
                             lastPurchase: new Date().toISOString().split('T')[0],
                             purchases: [...(currentCredit.purchases || []), sale]
                         };
-                        firebaseSet(creditRef, updatedCredit);
+                        window.firebaseSet(creditRef, updatedCredit);
                     });
                 }
             }
@@ -1490,8 +1481,8 @@
                 icon: icon
             };
 
-            const productRef = firebaseRef(firebaseDatabase, `products/${productId}`);
-            firebaseSet(productRef, newProduct);
+            const productRef = window.firebaseRef(window.firebaseDatabase, `products/${productId}`);
+            window.firebaseSet(productRef, newProduct);
 
             // Limpiar formulario
             document.getElementById('productName').value = '';
@@ -1586,8 +1577,8 @@
             const product = products[currentRestockProduct];
             const newStock = product.stock + restockQuantity;
 
-            const productRef = firebaseRef(firebaseDatabase, `products/${currentRestockProduct}/stock`);
-            firebaseSet(productRef, newStock);
+            const productRef = window.firebaseRef(window.firebaseDatabase, `products/${currentRestockProduct}/stock`);
+            window.firebaseSet(productRef, newStock);
 
             closeModal('restockModal');
             showNotification(`📦 Stock actualizado: +${restockQuantity} unidades para ${product.name}`);
@@ -1662,8 +1653,8 @@
                 address: address
             };
 
-            const customerRef = firebaseRef(firebaseDatabase, `customers/${customerId}`);
-            firebaseSet(customerRef, newCustomer);
+            const customerRef = window.firebaseRef(window.firebaseDatabase, `customers/${customerId}`);
+            window.firebaseSet(customerRef, newCustomer);
 
             // Limpiar formulario
             document.getElementById('customerName').value = '';
@@ -1791,12 +1782,12 @@
             
             if (newAmount <= 0) {
                 // Eliminar crédito si se paga completamente
-                const creditRef = firebaseRef(firebaseDatabase, `credits/${customerId}`);
-                firebaseRemove(creditRef);
+                const creditRef = window.firebaseRef(window.firebaseDatabase, `credits/${customerId}`);
+                window.firebaseRemove(creditRef);
             } else {
                 // Actualizar monto del crédito
-                const creditRef = firebaseRef(firebaseDatabase, `credits/${customerId}/amount`);
-                firebaseSet(creditRef, newAmount);
+                const creditRef = window.firebaseRef(window.firebaseDatabase, `credits/${customerId}/amount`);
+                window.firebaseSet(creditRef, newAmount);
             }
 
             // Registrar el pago en ventas
@@ -1813,8 +1804,8 @@
                 type: 'payment'
             };
 
-            const salesRef = firebaseRef(firebaseDatabase, 'sales');
-            firebasePush(salesRef, payment);
+            const salesRef = window.firebaseRef(window.firebaseDatabase, 'sales');
+            window.firebasePush(salesRef, payment);
 
             // Limpiar formulario
             document.getElementById('paymentAmount').value = '';
@@ -1902,10 +1893,8 @@
             }, 3000);
         }
 
-        // Inicializar Firebase cuando se carga la página
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeFirebase();
-        });
+        // Hacer la función disponible globalmente
+        window.initializeApp = initializeApp;
     </script>
 </body>
 </html>
