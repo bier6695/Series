@@ -576,6 +576,25 @@
             color: #667eea;
         }
 
+        .history-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .history-date {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .history-details {
+            font-size: 14px;
+            color: #666;
+        }
+
         @media (max-width: 768px) {
             .pos-grid {
                 grid-template-columns: 1fr;
@@ -1014,6 +1033,37 @@
         </div>
     </div>
 
+    <!-- Modal para Ver Historial de Créditos -->
+    <div id="creditHistoryModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <span class="close" onclick="closeModal('creditHistoryModal')">&times;</span>
+            <h3 style="margin-bottom: 25px;">📋 Historial de Créditos</h3>
+            
+            <div id="creditHistoryContent">
+                <!-- El historial se cargará dinámicamente -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 25px;">
+                <button class="btn btn-primary" onclick="closeModal('creditHistoryModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación para Eliminar -->
+    <div id="confirmDeleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('confirmDeleteModal')">&times;</span>
+            <h3 style="margin-bottom: 25px;">⚠️ Confirmar Eliminación</h3>
+            
+            <p id="deleteMessage" style="margin-bottom: 25px; text-align: center;"></p>
+            
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-danger" style="flex: 1;" onclick="confirmDelete()">🗑️ Eliminar</button>
+                <button class="btn btn-warning" style="flex: 1;" onclick="closeModal('confirmDeleteModal')">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDK -->
     <script type="module">
         // Import Firebase modules
@@ -1061,6 +1111,7 @@
         let credits = {};
         let sales = [];
         let currentRestockProduct = null;
+        let deleteTarget = null;
 
         // Inicialización de la aplicación
         function initializeApp() {
@@ -1520,7 +1571,8 @@
                     </td>
                     <td>
                         <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="showRestockModal('${product.id}')">📦 +Stock</button>
-                        <button class="btn btn-warning" style="padding: 8px 12px;" onclick="editProduct('${product.id}')">✏️ Editar</button>
+                        <button class="btn btn-warning" style="padding: 8px 12px; margin-right: 5px;" onclick="editProduct('${product.id}')">✏️ Editar</button>
+                        <button class="btn btn-danger" style="padding: 8px 12px;" onclick="showDeleteConfirm('product', '${product.id}', '${product.name}')">🗑️ Eliminar</button>
                     </td>
                 `;
                 
@@ -1586,6 +1638,60 @@
 
         function editProduct(productId) {
             showNotification('✏️ Función de edición disponible próximamente');
+        }
+
+        // Funciones de eliminación
+        function showDeleteConfirm(type, id, name) {
+            deleteTarget = { type, id, name };
+            const message = document.getElementById('deleteMessage');
+            
+            switch(type) {
+                case 'product':
+                    message.textContent = `¿Está seguro de eliminar el producto "${name}"?`;
+                    break;
+                case 'credit':
+                    message.textContent = `¿Está seguro de eliminar la deuda de "${name}"?`;
+                    break;
+                case 'customer':
+                    message.textContent = `¿Está seguro de eliminar el cliente "${name}"?`;
+                    break;
+            }
+            
+            document.getElementById('confirmDeleteModal').style.display = 'block';
+        }
+
+        function confirmDelete() {
+            if (!deleteTarget) return;
+            
+            const { type, id, name } = deleteTarget;
+            
+            switch(type) {
+                case 'product':
+                    const productRef = window.firebaseRef(window.firebaseDatabase, `products/${id}`);
+                    window.firebaseRemove(productRef);
+                    showNotification(`🗑️ Producto "${name}" eliminado`);
+                    break;
+                    
+                case 'credit':
+                    const creditRef = window.firebaseRef(window.firebaseDatabase, `credits/${id}`);
+                    window.firebaseRemove(creditRef);
+                    showNotification(`🗑️ Deuda de "${name}" eliminada`);
+                    break;
+                    
+                case 'customer':
+                    const customerRef = window.firebaseRef(window.firebaseDatabase, `customers/${id}`);
+                    window.firebaseRemove(customerRef);
+                    // También eliminar créditos asociados
+                    if (credits[id]) {
+                        const associatedCreditRef = window.firebaseRef(window.firebaseDatabase, `credits/${id}`);
+                        window.firebaseRemove(associatedCreditRef);
+                    }
+                    showNotification(`🗑️ Cliente "${name}" eliminado`);
+                    break;
+            }
+            
+            deleteTarget = null;
+            closeModal('confirmDeleteModal');
         }
 
         // Funciones de clientes
@@ -1688,7 +1794,8 @@
                     <td><span style="color: #f39c12;">⏰ Pendiente</span></td>
                     <td>
                         <button class="btn btn-success" style="padding: 8px 12px; margin-right: 5px;" onclick="processPayment('${credit.customerId}')">💰 Pagar</button>
-                        <button class="btn btn-primary" style="padding: 8px 12px;" onclick="viewCreditHistory('${credit.customerId}')">📋 Historial</button>
+                        <button class="btn btn-primary" style="padding: 8px 12px; margin-right: 5px;" onclick="viewCreditHistory('${credit.customerId}')">📋 Historial</button>
+                        <button class="btn btn-danger" style="padding: 8px 12px;" onclick="showDeleteConfirm('credit', '${credit.customerId}', '${customer.name}')">🗑️ Eliminar</button>
                     </td>
                 `;
                 
@@ -1815,7 +1922,52 @@
         }
 
         function viewCreditHistory(customerId) {
-            showNotification('📋 Historial de créditos disponible próximamente');
+            const credit = credits[customerId];
+            const customer = customers[customerId];
+            
+            if (!credit || !customer) {
+                showNotification('❌ No se encontró información del cliente', 'error');
+                return;
+            }
+
+            const historyContent = document.getElementById('creditHistoryContent');
+            historyContent.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h4>👤 ${customer.name}</h4>
+                    <p>📞 ${customer.phone}</p>
+                    <p style="color: #e74c3c; font-weight: bold; font-size: 1.2rem;">Deuda actual: $${credit.amount.toFixed(2)}</p>
+                </div>
+                
+                <h5 style="margin-bottom: 15px;">📋 Historial de Compras:</h5>
+                <div style="max-height: 300px; overflow-y: auto;">
+            `;
+
+            if (credit.purchases && credit.purchases.length > 0) {
+                credit.purchases.forEach(purchase => {
+                    const purchaseDate = new Date(purchase.timestamp).toLocaleDateString();
+                    const purchaseTime = new Date(purchase.timestamp).toLocaleTimeString();
+                    const itemsText = purchase.items && purchase.items.length > 0 
+                        ? purchase.items.map(item => `${item.name} (${item.quantity})`).join(', ')
+                        : 'Sin detalles';
+                    
+                    historyContent.innerHTML += `
+                        <div class="history-item">
+                            <div class="history-date">${purchaseDate} - ${purchaseTime}</div>
+                            <div class="history-details">
+                                <strong>Productos:</strong> ${itemsText}<br>
+                                <strong>Total:</strong> $${purchase.total.toFixed(2)}<br>
+                                <strong>Vendedor:</strong> ${purchase.vendor}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                historyContent.innerHTML += '<p style="text-align: center; color: #666;">No hay historial de compras disponible</p>';
+            }
+
+            historyContent.innerHTML += '</div>';
+            
+            document.getElementById('creditHistoryModal').style.display = 'block';
         }
 
         // Funciones del dashboard
@@ -1863,15 +2015,18 @@
 
             recentSales.forEach(sale => {
                 const row = document.createElement('tr');
-                const itemsText = sale.items.map(item => `${item.name} (${item.quantity})`).join(', ');
+                // Verificar que sale.items existe y es un array antes de usar map
+                const itemsText = sale.items && Array.isArray(sale.items) 
+                    ? sale.items.map(item => `${item.name} (${item.quantity})`).join(', ')
+                    : 'Sin detalles';
                 
                 row.innerHTML = `
-                    <td>${sale.time}</td>
-                    <td>${sale.vendor}</td>
-                    <td>${sale.customer}</td>
+                    <td>${sale.time || 'N/A'}</td>
+                    <td>${sale.vendor || 'N/A'}</td>
+                    <td>${sale.customer || 'N/A'}</td>
                     <td>${itemsText}</td>
-                    <td>$${sale.total.toFixed(2)}</td>
-                    <td>${sale.paymentMethod}</td>
+                    <td>$${(sale.total || 0).toFixed(2)}</td>
+                    <td>${sale.paymentMethod || 'N/A'}</td>
                 `;
                 
                 recentSalesTable.appendChild(row);
